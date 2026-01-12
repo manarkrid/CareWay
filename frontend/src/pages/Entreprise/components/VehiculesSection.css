@@ -1,0 +1,6 @@
+/* Import des styles de base depuis EquipeSection.css */
+@import './EquipeSection.css';
+
+.vehicules-section {
+  /* Styles spécifiques aux véhicules si nécessaire */
+}

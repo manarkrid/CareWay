@@ -1,0 +1,36 @@
+/* Import des styles de base depuis EquipeSection.css */
+@import './EquipeSection.css';
+
+.historique-section {
+  /* Styles spécifiques à l'historique */
+}
+
+.stats-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.stat-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid #f8f9fa;
+}
+
+.stat-item:last-child {
+  border-bottom: none;
+}
+
+.stat-label {
+  font-size: 14px;
+  color: #6c757d;
+  flex: 1;
+}
+
+.stat-value {
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+}

@@ -1,0 +1,35 @@
+.page-container {
+  padding: 30px;
+  height: 100%;
+  overflow-y: auto;
+}
+
+.page-header {
+  margin-bottom: 30px;
+}
+
+.page-header h1 {
+  font-size: 28px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.page-content {
+  display: grid;
+  grid-template-columns: 1fr 400px;
+  gap: 30px;
+  min-height: calc(100vh - 200px);
+}
+
+.left-column {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+.right-column {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}

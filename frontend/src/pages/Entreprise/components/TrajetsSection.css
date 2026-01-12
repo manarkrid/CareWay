@@ -1,0 +1,6 @@
+/* Import des styles de base depuis EquipeSection.css */
+@import './EquipeSection.css';
+
+.trajets-section {
+  /* Styles spécifiques aux trajets si nécessaire */
+}

@@ -1,0 +1,11 @@
+/* Import des styles de base depuis EquipeSection.css */
+@import './EquipeSection.css';
+
+.contrats-section {
+  /* Styles spécifiques aux contrats */
+}
+
+.status.in-progress {
+  background: #cce5ff;
+  color: #0066cc;
+}
