@@ -95,156 +95,151 @@ const Dashboard = () => {
         ))}
       </div>
 
-      {/* Contenu principal */}
-      <div className="dashboard-main">
-        {/* Section gauche */}
-        <div className="dashboard-left">
-          {/* Graphique d'évolution */}
-          <div className="chart-section">
-            <div className="chart-header">
-              <h3>Évolution du nombre de trajets</h3>
-              <div className="chart-legend">
-                <span className="legend-item">
-                  <span className="legend-color blue"></span>
-                  Trajets demandés
-                </span>
-                <span className="legend-item">
-                  <span className="legend-color dark-blue"></span>
-                  Trajets réalisés
-                </span>
-                <select className="period-selector">
-                  <option>Ce mois-ci</option>
-                </select>
-              </div>
-            </div>
-            <div className="chart-container">
-              <div className="chart-y-axis">
-                <span>100</span>
-                <span>80</span>
-                <span>60</span>
-                <span>40</span>
-                <span>20</span>
-              </div>
-              <div className="chart-bars">
-                {chartData.map((data, index) => (
-                  <div key={index} className="chart-bar-container">
-                    <div 
-                      className="chart-bar"
-                      style={{ height: `${data.value}%` }}
-                    >
-                      {data.value > 70 && <span className="bar-value">{data.value}</span>}
-                    </div>
-                    <span className="chart-label">{data.month}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
+      {/* Graphique d'évolution en haut */}
+      <div className="chart-section">
+        <div className="chart-header">
+          <h3>Évolution du nombre de trajets</h3>
+          <div className="chart-legend">
+            <span className="legend-item">
+              <span className="legend-color blue"></span>
+              Trajets demandés
+            </span>
+            <span className="legend-item">
+              <span className="legend-color dark-blue"></span>
+              Trajets réalisés
+            </span>
+            <select className="period-selector">
+              <option>Ce mois-ci</option>
+            </select>
           </div>
+        </div>
+        <div className="chart-container">
+          <div className="chart-y-axis">
+            <span>100</span>
+            <span>80</span>
+            <span>60</span>
+            <span>40</span>
+            <span>20</span>
+          </div>
+          <div className="chart-bars">
+            {chartData.map((data, index) => (
+              <div key={index} className="chart-bar-container">
+                <div 
+                  className="chart-bar"
+                  style={{ height: `${data.value}%` }}
+                >
+                  {data.value > 70 && <span className="bar-value">{data.value}</span>}
+                </div>
+                <span className="chart-label">{data.month}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
 
-          {/* Section Équipe */}
-          <div className="equipe-section">
-            <div className="section-header">
-              <h3>Équipe</h3>
-              <button className="filter-btn">Filtrer ⚙️</button>
-            </div>
-            <div className="equipe-table">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Nom de l'employé</th>
-                    <th>Emplacement</th>
-                    <th>Absence</th>
-                    <th>Taux d'activité</th>
-                    <th>Statut</th>
+      {/* Section inférieure avec Équipe et Répartition côte à côte */}
+      <div className="bottom-section">
+        {/* Section Équipe */}
+        <div className="equipe-section">
+          <div className="section-header">
+            <h3>Équipe</h3>
+            <button className="filter-btn">Filtrer ⚙️</button>
+          </div>
+          <div className="equipe-table">
+            <table>
+              <thead>
+                <tr>
+                  <th>Nom de l'employé</th>
+                  <th>Emplacement</th>
+                  <th>Absence</th>
+                  <th>Taux d'activité</th>
+                  <th>Statut</th>
+                </tr>
+              </thead>
+              <tbody>
+                {equipeData.map((employee, index) => (
+                  <tr key={index}>
+                    <td>
+                      <div className="employee-info">
+                        <div className="employee-avatar">👤</div>
+                        <span>{employee.nom}</span>
+                      </div>
+                    </td>
+                    <td>{employee.emplacement}</td>
+                    <td>{employee.absence}</td>
+                    <td>
+                      <span className="activity-rate">+{employee.activite}%</span>
+                    </td>
+                    <td>
+                      <span className={`status ${employee.statut === 'Disponible' ? 'available' : 'busy'}`}>
+                        {employee.statut}
+                      </span>
+                    </td>
                   </tr>
-                </thead>
-                <tbody>
-                  {equipeData.map((employee, index) => (
-                    <tr key={index}>
-                      <td>
-                        <div className="employee-info">
-                          <div className="employee-avatar">👤</div>
-                          <span>{employee.nom}</span>
-                        </div>
-                      </td>
-                      <td>{employee.emplacement}</td>
-                      <td>{employee.absence}</td>
-                      <td>
-                        <span className="activity-rate">+{employee.activite}%</span>
-                      </td>
-                      <td>
-                        <span className={`status ${employee.statut === 'Disponible' ? 'available' : 'busy'}`}>
-                          {employee.statut}
-                        </span>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                ))}
+              </tbody>
+            </table>
           </div>
         </div>
 
-        {/* Section droite */}
-        <div className="dashboard-right">
-          <div className="patients-repartition">
-            <h3>Répartition des patients</h3>
-            <div className="donut-chart">
-              <div className="donut-container">
-                <svg width="200" height="200" viewBox="0 0 200 200">
-                  {/* Cercle de fond */}
-                  <circle
-                    cx="100"
-                    cy="100"
-                    r="80"
-                    fill="none"
-                    stroke="#f0f0f0"
-                    strokeWidth="20"
-                  />
-                  {/* Segment bleu (65%) */}
-                  <circle
-                    cx="100"
-                    cy="100"
-                    r="80"
-                    fill="none"
-                    stroke="#2196f3"
-                    strokeWidth="20"
-                    strokeDasharray="326 175"
-                    strokeDashoffset="0"
-                    transform="rotate(-90 100 100)"
-                  />
-                  {/* Segment vert (35%) */}
-                  <circle
-                    cx="100"
-                    cy="100"
-                    r="80"
-                    fill="none"
-                    stroke="#00c853"
-                    strokeWidth="20"
-                    strokeDasharray="175 326"
-                    strokeDashoffset="-326"
-                    transform="rotate(-90 100 100)"
-                  />
-                </svg>
-                <div className="donut-center">
-                  <div className="percentage-35">35%</div>
-                  <div className="percentage-65">65%</div>
-                </div>
-              </div>
-              <div className="donut-legend">
-                <div className="legend-item">
-                  <span className="legend-dot blue"></span>
-                  <span>65%</span>
-                </div>
-                <div className="legend-item">
-                  <span className="legend-dot green"></span>
-                  <span>35%</span>
-                </div>
+        {/* Section Répartition des patients */}
+        <div className="patients-repartition">
+          <h3>Répartition des patients</h3>
+          <div className="donut-chart">
+            <div className="donut-container">
+              <svg width="200" height="200" viewBox="0 0 200 200">
+                {/* Cercle de fond */}
+                <circle
+                  cx="100"
+                  cy="100"
+                  r="80"
+                  fill="none"
+                  stroke="#f0f0f0"
+                  strokeWidth="20"
+                />
+                {/* Segment bleu (65%) */}
+                <circle
+                  cx="100"
+                  cy="100"
+                  r="80"
+                  fill="none"
+                  stroke="#2196f3"
+                  strokeWidth="20"
+                  strokeDasharray="326 175"
+                  strokeDashoffset="0"
+                  transform="rotate(-90 100 100)"
+                />
+                {/* Segment vert (35%) */}
+                <circle
+                  cx="100"
+                  cy="100"
+                  r="80"
+                  fill="none"
+                  stroke="#00c853"
+                  strokeWidth="20"
+                  strokeDasharray="175 326"
+                  strokeDashoffset="-326"
+                  transform="rotate(-90 100 100)"
+                />
+              </svg>
+              <div className="donut-center">
+                <div className="percentage-35">35%</div>
+                <div className="percentage-65">65%</div>
               </div>
             </div>
-            <div className="patients-total">
-              <strong>856 patients au total</strong>
+            <div className="donut-legend">
+              <div className="legend-item">
+                <span className="legend-dot blue"></span>
+                <span>65%</span>
+              </div>
+              <div className="legend-item">
+                <span className="legend-dot green"></span>
+                <span>35%</span>
+              </div>
             </div>
+          </div>
+          <div className="patients-total">
+            <strong>856 patients au total</strong>
           </div>
         </div>
       </div>
