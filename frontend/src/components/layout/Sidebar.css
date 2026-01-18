@@ -1,10 +1,27 @@
 .sidebar {
   width: 280px;
+  min-width: 280px;
   background: white;
   border-right: 1px solid #e9ecef;
   display: flex;
   flex-direction: column;
   height: 100vh;
+  flex-shrink: 0;
+}
+
+/* Responsive pour écrans plus petits */
+@media (max-width: 1200px) {
+  .sidebar {
+    width: 260px;
+    min-width: 260px;
+  }
+}
+
+@media (max-width: 992px) {
+  .sidebar {
+    width: 240px;
+    min-width: 240px;
+  }
 }
 
 .sidebar-header {

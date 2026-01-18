@@ -1,25 +1,486 @@
-.demandes-content {
-  display: flex;
-  flex-direction: column;
-  gap: 30px;
+/* Page Demandes - Style complet */
+
+.demandes-container {
+  width: 100%;
+  max-width: 100%;
+  padding: 30px;
+  box-sizing: border-box;
+  background-color: #f8f9fa;
+  min-height: 100vh;
 }
 
-.demandes-stats {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: 20px;
+/* Header */
+.demandes-header {
+  margin-bottom: 20px;
 }
 
-.demandes-list {
-  background: white;
-  padding: 24px;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-.demandes-list h3 {
-  font-size: 18px;
+.demandes-header h1 {
+  font-size: 28px;
   font-weight: 600;
   color: #333;
   margin-bottom: 20px;
+}
+
+/* Barre de contrôles */
+.demandes-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.controls-left {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.demandes-info {
+  color: #666;
+  font-size: 14px;
+}
+
+.view-toggle-btn {
+  padding: 8px 16px;
+  border: 1px solid #ddd;
+  background: white;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  color: #333;
+  transition: all 0.2s;
+}
+
+.view-toggle-btn:hover {
+  background: #f5f5f5;
+}
+
+.view-toggle {
+  display: flex;
+  gap: 8px;
+}
+
+.view-btn {
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  background: white;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-size: 16px;
+}
+
+.view-btn:hover {
+  background: #f5f5f5;
+}
+
+.view-btn.active {
+  background: #e3f2fd;
+  border-color: #2196f3;
+  color: #2196f3;
+}
+
+.controls-right {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.toggle-switch {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.toggle-switch label {
+  font-size: 14px;
+  color: #666;
+}
+
+.switch {
+  position: relative;
+  width: 48px;
+  height: 24px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  transition: 0.4s;
+  border-radius: 24px;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  transition: 0.4s;
+  border-radius: 50%;
+}
+
+input:checked + .slider {
+  background-color: #2196f3;
+}
+
+input:checked + .slider:before {
+  transform: translateX(24px);
+}
+
+.sort-filter {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sort-filter span {
+  font-size: 14px;
+  color: #666;
+}
+
+.sort-filter .sort-value {
+  color: #2196f3;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+/* Contenu principal - Split view */
+.demandes-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  width: 100%;
+  max-width: 100%;
+}
+
+/* Liste des demandes */
+.demandes-list {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.demande-card {
+  padding: 20px;
+  border-bottom: 1px solid #f0f0f0;
+  transition: background 0.2s;
+  cursor: pointer;
+}
+
+.demande-card:hover {
+  background: #f8f9fa;
+}
+
+.demande-card:last-child {
+  border-bottom: none;
+}
+
+.demande-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+}
+
+.demande-user {
+  display: flex;
+  flex-direction: column;
+}
+
+.demande-user h3 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+  margin: 0 0 4px 0;
+}
+
+.demande-date {
+  font-size: 13px;
+  color: #666;
+}
+
+.demande-price {
+  font-size: 20px;
+  font-weight: 700;
+  color: #333;
+}
+
+.demande-route {
+  display: flex;
+  align-items: start;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.route-icon {
+  color: #666;
+  margin-top: 2px;
+  font-size: 16px;
+}
+
+.route-details {
+  flex: 1;
+}
+
+.route-text {
+  font-size: 14px;
+  color: #333;
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.route-info {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  font-size: 12px;
+  color: #666;
+}
+
+.route-info span {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.demande-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.btn-action {
+  flex: 1;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.btn-accepter {
+  background: #e8f5e9;
+  color: #2e7d32;
+}
+
+.btn-accepter:hover {
+  background: #c8e6c9;
+}
+
+.btn-refuser {
+  background: #ffebee;
+  color: #c62828;
+}
+
+.btn-refuser:hover {
+  background: #ffcdd2;
+}
+
+/* Carte interactive */
+.demandes-map {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  position: relative;
+  height: 600px;
+}
+
+.map-header {
+  position: absolute;
+  top: 15px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+}
+
+.map-search-btn {
+  background: white;
+  padding: 12px 24px;
+  border-radius: 25px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  border: none;
+  font-size: 14px;
+  color: #333;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.map-search-btn:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.map-container {
+  width: 100%;
+  height: 100%;
+  background: #e5e3df;
+  position: relative;
+}
+
+/* Marqueurs de prix sur la carte */
+.price-marker {
+  position: absolute;
+  background: #2196f3;
+  color: white;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.price-marker:hover {
+  transform: scale(1.1);
+}
+
+.price-marker::after {
+  content: '';
+  position: absolute;
+  bottom: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 6px solid #2196f3;
+}
+
+/* Contrôles de la carte */
+.map-controls {
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  z-index: 10;
+}
+
+.map-control-btn {
+  width: 40px;
+  height: 40px;
+  background: white;
+  border: none;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  color: #333;
+}
+
+.map-control-btn:hover {
+  background: #f5f5f5;
+}
+
+/* Navigation pagination */
+.demandes-pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  margin-top: 20px;
+  padding: 20px 0;
+}
+
+.pagination-btn {
+  width: 36px;
+  height: 36px;
+  border: 1px solid #ddd;
+  background: white;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  color: #333;
+  transition: all 0.2s;
+}
+
+.pagination-btn:hover {
+  background: #f5f5f5;
+}
+
+.pagination-btn.active {
+  background: #2196f3;
+  color: white;
+  border-color: #2196f3;
+}
+
+.pagination-dots {
+  padding: 0 8px;
+  color: #999;
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+  .demandes-content {
+    grid-template-columns: 1fr;
+  }
+  
+  .demandes-map {
+    height: 500px;
+  }
+}
+
+@media (max-width: 768px) {
+  .demandes-container {
+    padding: 15px;
+  }
+  
+  .demandes-controls {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .controls-left,
+  .controls-right {
+    width: 100%;
+    justify-content: space-between;
+  }
+  
+  .demande-card {
+    padding: 15px;
+  }
+  
+  .demande-actions {
+    flex-direction: column;
+  }
+  
+  .map-header {
+    top: 10px;
+  }
 }

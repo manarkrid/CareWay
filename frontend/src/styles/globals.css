@@ -5,6 +5,14 @@
   padding: 24px;
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  transition: transform 0.2s ease;
+  box-sizing: border-box;
+}
+
+.stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 .stat-card h3 {
@@ -26,6 +34,8 @@
   border-radius: 12px;
   padding: 24px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .section-header {
@@ -69,4 +79,23 @@
 
 .btn-filter:hover {
   background: #e9ecef;
+}
+
+/* Styles de débogage pour identifier les contraintes de largeur */
+.debug-width {
+  border: 2px solid red !important;
+  background: rgba(255, 0, 0, 0.1) !important;
+}
+
+/* Force la largeur complète sur tous les conteneurs principaux */
+.app,
+.main-content,
+.page-content,
+.page-container,
+.page-header,
+.demandes-content,
+.demandes-stats,
+.demandes-list {
+  width: 100% !important;
+  max-width: none !important;
 }

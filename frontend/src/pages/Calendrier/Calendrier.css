@@ -11,11 +11,12 @@
   gap: 20px;
   width: 100%;
 }
+
 .full-width .page-content {
   display: block !important;
   grid-template-columns: none !important;
+  width: 100% !important;
 }
-
 
 .calendrier-view {
   background: white;
@@ -23,5 +24,6 @@
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   min-height: 400px;
-  width: 100%;   /* ✅ important */
+  width: 100%;
+  box-sizing: border-box;
 }

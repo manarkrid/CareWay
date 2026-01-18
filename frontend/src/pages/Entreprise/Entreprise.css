@@ -2,10 +2,13 @@
   padding: 30px;
   height: 100%;
   overflow-y: auto;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .page-header {
   margin-bottom: 30px;
+  width: 100%;
 }
 
 .page-header h1 {
@@ -20,16 +23,37 @@
   grid-template-columns: 1fr 400px;
   gap: 30px;
   min-height: calc(100vh - 200px);
+  width: 100%;
 }
 
 .left-column {
   display: flex;
   flex-direction: column;
   gap: 30px;
+  min-width: 0;
 }
 
 .right-column {
   display: flex;
   flex-direction: column;
   gap: 20px;
+  min-width: 0;
+}
+
+/* Responsive pour écrans plus petits */
+@media (max-width: 1200px) {
+  .page-content {
+    grid-template-columns: 1fr 300px;
+  }
+}
+
+@media (max-width: 992px) {
+  .page-content {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  
+  .page-container {
+    padding: 20px;
+  }
 }
