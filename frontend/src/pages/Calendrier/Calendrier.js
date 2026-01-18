@@ -13,7 +13,7 @@ const Calendrier = () => {
   ];
 
   return (
-    <div className="page-container">
+    <div className="page-content full-width">
       <div className="page-header">
         <h1>Calendrier & Planning</h1>
         <TabNavigation 
