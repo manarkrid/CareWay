@@ -23,27 +23,41 @@ const Entreprise = () => {
 
   return (
     <div className="page-container">
-      <div className="page-header">
-        <h1>Entreprise</h1>
+      <h1>Entreprise</h1>
+
+      <div className="entreprise-card">
+        {/* Onglets */}
         <TabNavigation 
           tabs={tabs}
           activeTab={activeTab} 
           setActiveTab={setActiveTab} 
         />
-      </div>
-      
-      <div className="page-content">
-        <div className="left-column">
-          <EquipeSection />
-          <VehiculesSection />
-          <TrajetsSection />
-        </div>
-        
-        <div className="right-column">
-          <ContratsSection />
-          <HistoriqueSection />
-          <NotificationsSection />
-        </div>
+
+        {/* Contenu */}
+        {activeTab === 'Tout' ? (
+          <div className="entreprise-layout">
+            <div className="left-column">
+              <EquipeSection />
+              <VehiculesSection />
+              <TrajetsSection />
+            </div>
+            <div className="right-column">
+              <ContratsSection />
+              <HistoriqueSection />
+              <NotificationsSection />
+            </div>
+          </div>
+        ) : (
+          // Si un onglet spécifique est actif → afficher seulement cette section
+          <div className="single-section">
+            {activeTab === 'Équipe' && <EquipeSection />}
+            {activeTab === 'Véhicules' && <VehiculesSection />}
+            {activeTab === 'Trajets du mois' && <TrajetsSection />}
+            {activeTab === 'Contrats & Conventions' && <ContratsSection />}
+            {activeTab === 'Historique & Statistiques' && <HistoriqueSection />}
+            {activeTab === 'Alertes' && <NotificationsSection />}
+          </div>
+        )}
       </div>
     </div>
   );
