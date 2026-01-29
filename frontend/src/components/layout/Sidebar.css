@@ -189,3 +189,10 @@
   cursor: pointer;
   padding: 0;
 }
+.logo img {
+  width: 40px;           /* Largeur du logo */
+  height: 40px;          /* Hauteur du logo */
+  object-fit: contain;   /* Respecte les proportions */
+  border-radius: 6px;    /* Coins arrondis */
+  flex-shrink: 0;        /* Évite que l'image soit écrasée */
+}

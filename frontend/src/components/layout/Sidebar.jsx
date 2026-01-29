@@ -1,6 +1,7 @@
 import React from 'react';
 import './Sidebar.css';
 
+
 const Sidebar = ({ currentPage, setCurrentPage }) => {
   const menuItems = [
     { id: 'dashboard', icon: '📊', label: 'Tableau de bord' },
@@ -15,7 +16,7 @@ const Sidebar = ({ currentPage, setCurrentPage }) => {
     <div className="sidebar">
       <div className="sidebar-header">
         <div className="logo">
-          <span className="logo-icon">🔵</span>
+          <img src="/images/carewaylg.jpg" alt="CareWay Logo" />
           <span className="logo-text">CareWay</span>
         </div>
       </div>

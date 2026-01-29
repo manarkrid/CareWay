@@ -4,7 +4,6 @@ import AjouterTrajet from './AjouterTrajet';
 
 const Calendrier = () => {
   const [activeTab, setActiveTab] = useState("Semaine");
-  const [selectedView, setSelectedView] = useState("Semaine"); // Pour la vue interne
   const [selectedPerson, setSelectedPerson] = useState("Tous");
   const [currentDate, setCurrentDate] = useState(new Date());
   const [showModal, setShowModal] = useState(false);
@@ -12,9 +11,6 @@ const Calendrier = () => {
   // Onglets principaux
   const tabs = ["Aujourd'hui", "Personne", "Semaine"];
 
-  // Données pour différentes vues
-  const views = ["Jour", "Semaine", "Mois", "Année"];
-  
   // Données des personnes
   const personnesList = [
     { id: 1, name: 'Loïc', role: 'Chauffeur', statut: 'Disponible', trajets: 12 },
@@ -63,7 +59,7 @@ const Calendrier = () => {
     });
   };
 
-  // Navigation des dates
+  // Navigation des dates (pour l'onglet "Aujourd'hui")
   const handlePrevDay = () => {
     const newDate = new Date(currentDate);
     newDate.setDate(newDate.getDate() - 1);
@@ -76,6 +72,19 @@ const Calendrier = () => {
     setCurrentDate(newDate);
   };
 
+  // Navigation par semaine (pour l'onglet "Semaine")
+  const handlePrevWeek = () => {
+    const newDate = new Date(currentDate);
+    newDate.setDate(newDate.getDate() - 7);
+    setCurrentDate(newDate);
+  };
+
+  const handleNextWeek = () => {
+    const newDate = new Date(currentDate);
+    newDate.setDate(newDate.getDate() + 7);
+    setCurrentDate(newDate);
+  };
+
   const handleToday = () => {
     setCurrentDate(new Date());
   };
@@ -83,6 +92,39 @@ const Calendrier = () => {
   const handleSaveTrajet = (trajetData) => {
     console.log('Trajet enregistré:', trajetData);
     setShowModal(false);
+  };
+
+  // Fonctions utilitaires pour les semaines
+  const getStartOfWeek = (date) => {
+    const currentDate = new Date(date);
+    const day = currentDate.getDay();
+    const diff = currentDate.getDate() - day + (day === 0 ? -6 : 1); // Ajuste pour que la semaine commence lundi
+    const start = new Date(currentDate.setDate(diff));
+    return start;
+  };
+
+  const getEndOfWeek = (date) => {
+    const start = getStartOfWeek(date);
+    const end = new Date(start);
+    end.setDate(start.getDate() + 6);
+    return end;
+  };
+
+  // Fonction pour obtenir les dates de chaque jour de la semaine actuelle
+  const getWeekDays = () => {
+    const start = getStartOfWeek(currentDate);
+    const days = [];
+    
+    for (let i = 0; i < 7; i++) {
+      const day = new Date(start);
+      day.setDate(start.getDate() + i);
+      days.push({
+        name: joursSemaine[i],
+        date: day
+      });
+    }
+    
+    return days;
   };
 
   // Rendu du contenu selon l'onglet actif
@@ -145,7 +187,7 @@ const Calendrier = () => {
                 value={selectedPerson}
                 onChange={(e) => setSelectedPerson(e.target.value)}
               >
-                <option value="Tous">Toute l'équipe</option>
+                <option value="Tous">les membres</option>
                 {personnesList.map(p => (
                   <option key={p.id} value={p.name}>{p.name}</option>
                 ))}
@@ -186,9 +228,10 @@ const Calendrier = () => {
                 </h3>
                 <div className="mini-calendar">
                   <div className="mini-days">
-                    {['L', 'M', 'M', 'J', 'V', 'S', 'D'].map((day, index) => (
+                    {getWeekDays().map((day, index) => (
                       <div key={index} className="mini-day">
-                        {day}
+                        <div>{joursSemaine[index].charAt(0)}</div>
+                        <div className="mini-date">{formatShortDate(day.date).split(' ')[0]}</div>
                       </div>
                     ))}
                   </div>
@@ -211,38 +254,32 @@ const Calendrier = () => {
         );
 
       case "Semaine":
+        const weekDays = getWeekDays();
+        
         return (
           <div className="content-week">
             <div className="week-header">
               <h2>Planning de la semaine</h2>
-              <div className="view-selector">
-                {views.map(view => (
-                  <button
-                    key={view}
-                    className={`view-button ${selectedView === view ? 'active' : ''}`}
-                    onClick={() => setSelectedView(view)}
-                  >
-                    {view}
-                  </button>
-                ))}
-              </div>
             </div>
 
             {/* Navigation par semaine */}
             <div className="week-navigation">
-              <button className="nav-button" onClick={handlePrevDay}>‹ Semaine précédente</button>
+              <button className="nav-button" onClick={handlePrevWeek}>‹ Semaine précédente</button>
               <div className="current-week">
                 Semaine du {formatShortDate(getStartOfWeek(currentDate))} au {formatShortDate(getEndOfWeek(currentDate))}
               </div>
-              <button className="nav-button" onClick={handleNextDay}>Semaine suivante ›</button>
+              <button className="nav-button" onClick={handleNextWeek}>Semaine suivante ›</button>
             </div>
 
             {/* Grille du calendrier */}
             <div className="calendrier-grid">
               <div className="days-header">
                 <div className="day-header"></div>
-                {joursSemaine.map(day => (
-                  <div key={day} className="day-header">{day}</div>
+                {weekDays.map(day => (
+                  <div key={day.name} className="day-header">
+                    <div className="day-name">{day.name}</div>
+                    <div className="day-date">{formatShortDate(day.date)}</div>
+                  </div>
                 ))}
               </div>
 
@@ -250,12 +287,12 @@ const Calendrier = () => {
                 {timeSlots.map((time, timeIndex) => (
                   <div key={time} className="time-row">
                     <div className="time-label">{time}</div>
-                    {joursSemaine.map(day => (
-                      <div key={`${day}-${time}`} className="day-cell">
-                        {planningData[day] && timeIndex === 1 && (
-                          planningData[day].map((person, index) => (
+                    {weekDays.map(day => (
+                      <div key={`${day.name}-${time}`} className="day-cell">
+                        {planningData[day.name] && timeIndex === 1 && (
+                          planningData[day.name].map((person, index) => (
                             <div 
-                              key={`${day}-${person}-${index}`} 
+                              key={`${day.name}-${person}-${index}`} 
                               className="person-item"
                               style={{ 
                                 backgroundColor: getPersonColor(person)
@@ -283,29 +320,16 @@ const Calendrier = () => {
     }
   };
 
-  // Fonctions utilitaires
+  // Fonction utilitaire pour les couleurs
   const getPersonColor = (name) => {
-    const person = personnesList.find(p => p.name === name);
-    return person ? {
+    const colors = {
       'Loïc': '#e3f2fd',
       'Paul': '#f3e5f5', 
       'Jose': '#e8f5e9',
       'Jean': '#fff3e0',
       'Jase': '#fce4ec'
-    }[name] || '#e3f2fd' : '#e3f2fd';
-  };
-
-  const getStartOfWeek = (date) => {
-    const day = date.getDay();
-    const diff = date.getDate() - day + (day === 0 ? -6 : 1);
-    return new Date(date.setDate(diff));
-  };
-
-  const getEndOfWeek = (date) => {
-    const start = getStartOfWeek(date);
-    const end = new Date(start);
-    end.setDate(start.getDate() + 6);
-    return end;
+    };
+    return colors[name] || '#e3f2fd';
   };
 
   return (

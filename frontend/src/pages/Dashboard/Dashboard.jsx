@@ -101,16 +101,14 @@ const Dashboard = () => {
           <h3>Évolution du nombre de trajets</h3>
           <div className="chart-legend">
             <span className="legend-item">
-              <span className="legend-color blue"></span>
+              <span className="legend-color light-blue"></span>
               Trajets demandés
             </span>
             <span className="legend-item">
               <span className="legend-color dark-blue"></span>
               Trajets réalisés
             </span>
-            <select className="period-selector">
-              <option>Ce mois-ci</option>
-            </select>
+            
           </div>
         </div>
         <div className="chart-container">
@@ -128,7 +126,7 @@ const Dashboard = () => {
                   className="chart-bar"
                   style={{ height: `${data.value}%` }}
                 >
-                  {data.value > 70 && <span className="bar-value">{data.value}</span>}
+                  <span className="bar-tooltip">{data.value}</span>
                 </div>
                 <span className="chart-label">{data.month}</span>
               </div>
