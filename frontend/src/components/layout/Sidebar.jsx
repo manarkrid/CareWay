@@ -31,7 +31,7 @@ const Sidebar = ({ currentPage, setCurrentPage }) => {
       <div className="user-profile">
         <div className="user-avatar">👤</div>
         <div className="user-info">
-          <div className="user-name">Pierre Michel ...</div>
+          <div className="user-name">Pierre Michel</div>
           <div className="user-role">Transporteur coordinateur</div>
         </div>
       </div>
