@@ -16,8 +16,15 @@ const Sidebar = ({ currentPage, setCurrentPage }) => {
     <div className="sidebar">
       <div className="sidebar-header">
         <div className="logo">
-          <img src="/images/carewaylg.jpg" alt="CareWay Logo" />
-          <span className="logo-text">CareWay</span>
+          <img
+  src="/images/carewaylg.jpg"
+  alt="CareWay Logo"
+ 
+  style={{ width: '120px' }}
+/>
+
+
+         
         </div>
       </div>
       

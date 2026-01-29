@@ -1,6 +1,6 @@
 .sidebar {
-  width: 280px;
-  min-width: 280px;
+  width: 260px;
+  min-width: 260px;
   background: white;
   border-right: 1px solid #e9ecef;
   display: flex;
@@ -189,10 +189,9 @@
   cursor: pointer;
   padding: 0;
 }
-.logo img {
-  width: 40px;           /* Largeur du logo */
-  height: 40px;          /* Hauteur du logo */
-  object-fit: contain;   /* Respecte les proportions */
-  border-radius: 6px;    /* Coins arrondis */
-  flex-shrink: 0;        /* Évite que l'image soit écrasée */
+.logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
 }
