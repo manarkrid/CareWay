@@ -1,63 +1,70 @@
 import React, { useState } from 'react';
 import './Entreprise.css';
-import TabNavigation from '../../components/shared/TabNavigation';
-import EquipeSection from './components/EquipeSection';
-import VehiculesSection from './components/VehiculesSection';
-import TrajetsSection from './components/TrajetsSection';
-import ContratsSection from './components/ContratsSection';
-import HistoriqueSection from './components/HistoriqueSection';
-import NotificationsSection from './components/NotificationsSection';
+import TabNavigation from '../../components/shared/TabNavigation.jsx';
+import EquipeSection from './components/EquipeSection.jsx';
+import VehiculesSection from './components/VehiculesSection.jsx';
+import TrajetsSection from './components/TrajetsSection.jsx';
+import ContratsSection from './components/ContratsSection.jsx';
+import HistoriqueSection from './components/HistoriqueSection.jsx';
+import NotificationsSection from './components/NotificationsSection.jsx';
+import SuiviGPSSection from './components/SuiviGPSSection.jsx';
+import RapportsSection from './components/RapportsSection.jsx';
 
 const Entreprise = () => {
   const [activeTab, setActiveTab] = useState('Tout');
 
-  const tabs = [
-    'Tout',
-    'Trajets du mois',
-    'Véhicules',
-    'Équipe',
-    'Alertes',
-    'Contrats & Conventions',
-    'Historique & Statistiques'
-  ];
+  const tabs = ['Tout', 'Trajets du mois', 'Véhicules', 'Équipe', 'Contrats', 'GPS & Suivi', 'Rapports', 'Alertes'];
+
+  const renderContent = () => {
+    switch (activeTab) {
+      case 'Équipe':
+        return <EquipeSection />;
+      case 'Véhicules':
+        return <VehiculesSection />;
+      case 'Trajets du mois':
+        return <TrajetsSection />;
+      case 'Contrats':
+        return <ContratsSection />;
+      case 'GPS & Suivi':
+        return <SuiviGPSSection />;
+      case 'Rapports':
+        return <RapportsSection />;
+      case 'Alertes':
+        return (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+            <NotificationsSection />
+          </div>
+        );
+      default: // Tout
+        return (
+          <>
+            <SuiviGPSSection />
+            <div className="page-layout-grid">
+              <div className="left-column">
+                <EquipeSection />
+                <VehiculesSection />
+                <TrajetsSection />
+              </div>
+              <div className="right-column">
+                <ContratsSection />
+                <HistoriqueSection />
+                <NotificationsSection />
+              </div>
+            </div>
+            <RapportsSection />
+          </>
+        );
+    }
+  };
 
   return (
     <div className="page-container">
-      <h1>Entreprise</h1>
-
-      <div className="entreprise-card">
-        {/* Onglets */}
-        <TabNavigation 
-          tabs={tabs}
-          activeTab={activeTab} 
-          setActiveTab={setActiveTab} 
-        />
-
-        {/* Contenu */}
-        {activeTab === 'Tout' ? (
-          <div className="entreprise-layout">
-            <div className="left-column">
-              <EquipeSection />
-              <VehiculesSection />
-              <TrajetsSection />
-            </div>
-            <div className="right-column">
-              <ContratsSection />
-              <HistoriqueSection />
-              <NotificationsSection />
-            </div>
-          </div>
-        ) : (
-          // Si un onglet spécifique est actif → afficher seulement cette section
-          <div className="single-section">
-            {activeTab === 'Équipe' && <EquipeSection />}
-            {activeTab === 'Véhicules' && <VehiculesSection />}
-            {activeTab === 'Trajets du mois' && <TrajetsSection />}
-            {activeTab === 'Contrats & Conventions' && <ContratsSection />}
-            {activeTab === 'Historique & Statistiques' && <HistoriqueSection />}
-            {activeTab === 'Alertes' && <NotificationsSection />}
-          </div>
-        )}
+      <div className="page-header">
+        <h1>Entreprise</h1>
+        <TabNavigation tabs={tabs} activeTab={activeTab} setActiveTab={setActiveTab} />
+      </div>
+      <div className="entreprise-content">
+        {renderContent()}
       </div>
     </div>
   );

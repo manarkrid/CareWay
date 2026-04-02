@@ -9,7 +9,7 @@ const Calendrier = () => {
   const [showModal, setShowModal] = useState(false);
 
   // Onglets principaux
-  const tabs = ["Aujourd'hui", "Personne", "Semaine"];
+  const tabs = ["Aujourd'hui", "À venir", "Passées", "Personne", "Semaine"];
 
   // Données des personnes
   const personnesList = [
@@ -22,7 +22,7 @@ const Calendrier = () => {
 
   // Données du planning
   const joursSemaine = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'];
-  const timeSlots = ['08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00'];
+  const timeSlots = Array.from({ length: 24 }, (_, i) => `${String(i).padStart(2, '0')}:00`);
 
   const planningData = {
     'Lundi': ['Loïc', 'Paul'],
@@ -34,15 +34,25 @@ const Calendrier = () => {
     'Dimanche': ['Loïc', 'Paul']
   };
 
-  // Données pour aujourd'hui
-  const [trajetsAujourdhui, setTrajetsAujourdhui] = useState([]);
+  // État global de tous les trajets (partagé entre tous les onglets)
+  const [allTrajets, setAllTrajets] = useState([]);
 
   React.useEffect(() => {
     fetch('http://localhost:3001/api/calendrier/today')
       .then(res => res.json())
-      .then(data => setTrajetsAujourdhui(data))
-      .catch(err => console.error("Erreur serveur calendrier", err));
+      .then(data => setAllTrajets(data))
+      .catch(() => setAllTrajets([
+        { id: 1, heure: '08:30', date: 'Aujourd\'hui', client: 'Hôpital Central', personne: 'Loïc', statut: 'En cours' },
+        { id: 2, heure: '10:15', date: 'Aujourd\'hui', client: 'Clinique Nord', personne: 'Marie', statut: 'À venir' },
+        { id: 3, heure: '14:00', date: 'Aujourd\'hui', client: 'Centre Médical', personne: 'Paul', statut: 'À venir' },
+      ]));
   }, []);
+
+  // Trajets filtrés par onglet
+  const today = new Date().toLocaleDateString('fr-FR');
+  const trajetsAujourdhui = allTrajets.filter(t => !t.date || t.date === 'Aujourd\'hui' || t.date === today);
+  const trajetsAvenir = allTrajets.filter(t => t.date && t.date !== 'Aujourd\'hui' && t.date !== today && !['Hier', 'Il y a 2 jours', 'Il y a 3 jours', 'Il y a 4 jours'].includes(t.date));
+  const trajetsPassees = allTrajets.filter(t => ['Hier', 'Il y a 2 jours', 'Il y a 3 jours', 'Il y a 4 jours'].includes(t.date));
 
   // Formatter la date
   const formatDate = (date) => {
@@ -92,18 +102,33 @@ const Calendrier = () => {
   };
 
   const handleSaveTrajet = async (trajetData) => {
+    // Déterminer la date du trajet
+    const dateLabel = trajetData.dateDebut || "Aujourd'hui";
+    const newTrajet = {
+      id: Date.now(),
+      heure: trajetData.heureDebut || '00:00',
+      date: dateLabel,
+      client: trajetData.nom || 'Nouveau trajet',
+      personne: trajetData.personnes?.length > 0 ? trajetData.personnes[0].nom : 'Non assigné',
+      statut: 'Planifié',
+      from: trajetData.adresse || '',
+      to: '',
+    };
+
+    // Essayer d'envoyer au backend
     try {
       const response = await fetch('http://localhost:3001/api/calendrier/trajet', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(trajetData)
       });
-      const newTrajet = await response.json();
-      setTrajetsAujourdhui([...trajetsAujourdhui, newTrajet]);
-      setShowModal(false);
-    } catch (err) {
-      console.error("Erreur lors de l'ajout du trajet", err);
+      const saved = await response.json();
+      setAllTrajets(prev => [...prev, { ...newTrajet, ...saved }]);
+    } catch {
+      // Fallback local
+      setAllTrajets(prev => [...prev, newTrajet]);
     }
+    setShowModal(false);
   };
 
   // Fonctions utilitaires pour les semaines
@@ -248,7 +273,7 @@ const Calendrier = () => {
                     ))}
                   </div>
                   <div className="mini-slots">
-                    {timeSlots.slice(0, 6).map(time => (
+                    {timeSlots.map(time => (
                       <div key={time} className="mini-time-slot">
                         <div className="mini-time">{time}</div>
                         <div className="mini-activity">
@@ -268,13 +293,36 @@ const Calendrier = () => {
       case "Semaine":
         const weekDays = getWeekDays();
 
+        // Construire un index dynamique : { "Lundi-09:00": [trajet1, trajet2], ... }
+        const weekIndex = {};
+        allTrajets.forEach(trajet => {
+          // Trouver le jour de la semaine correspondant à la date du trajet
+          weekDays.forEach(day => {
+            const dayStr = day.date.toLocaleDateString('fr-FR');
+            if (
+              trajet.date === day.name ||
+              trajet.date === dayStr ||
+              (trajet.date === "Aujourd'hui" && dayStr === new Date().toLocaleDateString('fr-FR'))
+            ) {
+              // Trouver le créneau horaire le plus proche
+              const heure = trajet.heure || '08:00';
+              const slotHour = heure.split(':')[0] + ':00';
+              const key = `${day.name}-${slotHour}`;
+              if (!weekIndex[key]) weekIndex[key] = [];
+              weekIndex[key].push(trajet);
+            }
+          });
+        });
+
         return (
           <div className="content-week">
             <div className="week-header">
               <h2>Planning de la semaine</h2>
+              <span style={{ fontSize: 13, color: '#6c757d' }}>
+                {allTrajets.length} trajet(s) au total
+              </span>
             </div>
 
-            {/* Navigation par semaine */}
             <div className="week-navigation">
               <button className="nav-button" onClick={handlePrevWeek}>‹ Semaine précédente</button>
               <div className="current-week">
@@ -283,39 +331,111 @@ const Calendrier = () => {
               <button className="nav-button" onClick={handleNextWeek}>Semaine suivante ›</button>
             </div>
 
-            {/* Grille du calendrier */}
             <div className="calendrier-grid">
               <div className="days-header">
                 <div className="day-header"></div>
-                {weekDays.map(day => (
-                  <div key={day.name} className="day-header">
-                    <div className="day-name">{day.name}</div>
-                    <div className="day-date">{formatShortDate(day.date)}</div>
-                  </div>
-                ))}
+                {weekDays.map(day => {
+                  const isToday = day.date.toLocaleDateString('fr-FR') === new Date().toLocaleDateString('fr-FR');
+                  return (
+                    <div key={day.name} className={`day-header ${isToday ? 'today-col' : ''}`}>
+                      <div className="day-name">{day.name}</div>
+                      <div className="day-date">{formatShortDate(day.date)}</div>
+                    </div>
+                  );
+                })}
               </div>
 
               <div className="time-slots">
-                {timeSlots.map((time, timeIndex) => (
+                {timeSlots.map(time => (
                   <div key={time} className="time-row">
                     <div className="time-label">{time}</div>
-                    {weekDays.map(day => (
-                      <div key={`${day.name}-${time}`} className="day-cell">
-                        {planningData[day.name] && timeIndex === 1 && (
-                          planningData[day.name].map((person, index) => (
-                            <div
-                              key={`${day.name}-${person}-${index}`}
-                              className="person-item"
-                              style={{
-                                backgroundColor: getPersonColor(person)
-                              }}
-                            >
-                              {person}
+                    {weekDays.map(day => {
+                      const key = `${day.name}-${time}`;
+                      const trajetsCell = weekIndex[key] || [];
+                      const isToday = day.date.toLocaleDateString('fr-FR') === new Date().toLocaleDateString('fr-FR');
+                      return (
+                        <div key={key} className={`day-cell ${isToday ? 'today-col' : ''}`}>
+                          {trajetsCell.map((t, i) => (
+                            <div key={i} className="person-item" style={{ backgroundColor: getPersonColor(t.personne) }}
+                              title={`${t.client} — ${t.personne} (${t.statut})`}>
+                              <span style={{ fontWeight: 600, fontSize: 11 }}>{t.heure}</span>
+                              <span style={{ fontSize: 11, marginLeft: 4 }}>{t.personne}</span>
+                              <br />
+                              <span style={{ fontSize: 10, color: '#555' }}>{t.client}</span>
                             </div>
-                          ))
-                        )}
-                      </div>
-                    ))}
+                          ))}
+                        </div>
+                      );
+                    })}
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {allTrajets.length === 0 && (
+              <div style={{ textAlign: 'center', padding: 40, color: '#6c757d', fontSize: 14 }}>
+                Aucun trajet cette semaine. Cliquez sur "+ Ajouter un trajet" pour en créer un.
+              </div>
+            )}
+          </div>
+        );
+
+      case "À venir":
+        const mockAvenir = [
+          { id: 10, heure: '14:00', date: 'Demain', client: 'Clinique du Sidobre', personne: 'Loïc', statut: 'Planifié', from: '2 rue Gambetta', to: 'Clinique du Sidobre' },
+          { id: 11, heure: '09:30', date: 'Dans 2 jours', client: 'CHIC Castres', personne: 'Paul', statut: 'Planifié', from: '5 bd Roosevelt', to: 'CHIC Castres' },
+          { id: 12, heure: '11:00', date: 'Dans 3 jours', client: 'EHPAD Les Pins', personne: 'Jose', statut: 'Planifié', from: '8 rue des Lilas', to: 'EHPAD Les Pins' },
+        ];
+        const displayAvenir = [...mockAvenir, ...trajetsAvenir];
+        return (
+          <div className="content-today">
+            <div className="today-header">
+              <h2>Missions à venir</h2>
+              <span style={{ fontSize: 14, color: '#6c757d' }}>{displayAvenir.length} mission(s)</span>
+            </div>
+            <div className="today-trajets">
+              <div className="trajets-list">
+                {displayAvenir.map(t => (
+                  <div key={t.id} className="trajet-item">
+                    <div className="trajet-time">{t.date}<br/><small>{t.heure}</small></div>
+                    <div className="trajet-info">
+                      <div className="trajet-client">{t.client}</div>
+                      {t.from && <div className="trajet-person">{t.from}{t.to ? ` → ${t.to}` : ''}</div>}
+                      <div className="trajet-person">avec {t.personne}</div>
+                    </div>
+                    <div className="trajet-statut planifie">{t.statut}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        );
+
+      case "Passées":
+        const mockPassees = [
+          { id: 20, heure: '08:30', date: 'Hier', client: 'Hôpital Central', personne: 'Loïc', statut: 'Terminé', from: '4 rue Foch', to: 'Hôpital Central' },
+          { id: 21, heure: '10:15', date: 'Il y a 2 jours', client: 'Clinique Nord', personne: 'Marie', statut: 'Terminé', from: '1 av. Lane', to: 'Clinique Nord' },
+          { id: 22, heure: '14:00', date: 'Il y a 3 jours', client: 'Centre Médical', personne: 'Paul', statut: 'Terminé', from: '6 rue Dufour', to: 'Centre Médical' },
+          { id: 23, heure: '16:45', date: 'Il y a 4 jours', client: 'Résidence Soleil', personne: 'Jean', statut: 'Annulé', from: '3 rue Foch', to: 'Résidence Soleil' },
+        ];
+        const displayPassees = [...mockPassees, ...trajetsPassees];
+        return (
+          <div className="content-today">
+            <div className="today-header">
+              <h2>Missions passées</h2>
+              <span style={{ fontSize: 14, color: '#6c757d' }}>{displayPassees.length} mission(s)</span>
+            </div>
+            <div className="today-trajets">
+              <div className="trajets-list">
+                {displayPassees.map(t => (
+                  <div key={t.id} className="trajet-item">
+                    <div className="trajet-time">{t.date}<br/><small>{t.heure}</small></div>
+                    <div className="trajet-info">
+                      <div className="trajet-client">{t.client}</div>
+                      {t.from && <div className="trajet-person">{t.from}{t.to ? ` → ${t.to}` : ''}</div>}
+                      <div className="trajet-person">avec {t.personne}</div>
+                    </div>
+                    <div className={`trajet-statut ${t.statut === 'Terminé' ? 'termine' : 'annule'}`}>{t.statut}</div>
                   </div>
                 ))}
               </div>
@@ -345,7 +465,7 @@ const Calendrier = () => {
   };
 
   return (
-    <div className="page-content full-width">
+    <div className="calendrier-wrapper">
       {/* Header interactif */}
       <div className="calendrier-header">
         <div className="tabs-container">

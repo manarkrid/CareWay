@@ -2,6 +2,88 @@ import React, { useState, useEffect } from 'react';
 import './Profil.css';
 import { FiCamera } from 'react-icons/fi';
 
+// Composant GPS pour le chauffeur
+const GPSTab = () => {
+  const [gpsAutorise, setGpsAutorise] = useState(false);
+  const [position, setPosition] = useState(null);
+  const [envoi, setEnvoi] = useState(false);
+  const [lastSent, setLastSent] = useState(null);
+  const [error, setError] = useState('');
+
+  const autoriserGPS = () => {
+    if (!('geolocation' in navigator)) {
+      setError("La géolocalisation n'est pas supportée par votre navigateur.");
+      return;
+    }
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        setGpsAutorise(true);
+        setPosition({ lat: pos.coords.latitude, lng: pos.coords.longitude, accuracy: pos.coords.accuracy });
+        setError('');
+      },
+      () => setError("Accès GPS refusé. Veuillez autoriser la géolocalisation dans votre navigateur.")
+    );
+  };
+
+  const envoyerPosition = () => {
+    if (!position) return;
+    setEnvoi(true);
+    // Simulation envoi au backend
+    setTimeout(() => {
+      setLastSent(new Date().toLocaleTimeString('fr-FR'));
+      setEnvoi(false);
+    }, 800);
+  };
+
+  // Mise à jour automatique toutes les 30s si GPS autorisé
+  useEffect(() => {
+    if (!gpsAutorise) return;
+    const interval = setInterval(() => {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => setPosition({ lat: pos.coords.latitude, lng: pos.coords.longitude, accuracy: pos.coords.accuracy }),
+        () => {}
+      );
+    }, 30000);
+    return () => clearInterval(interval);
+  }, [gpsAutorise]);
+
+  return (
+    <div className="profil-content">
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+        <div style={{ background: '#f8f9fa', borderRadius: 8, padding: 20 }}>
+          <h3 style={{ marginBottom: 12, fontSize: 16 }}>📍 Suivi GPS</h3>
+          <p style={{ fontSize: 14, color: '#6c757d', marginBottom: 16 }}>
+            Autorisez l'accès à votre position pour permettre au coordinateur de vous suivre en temps réel.
+          </p>
+          {error && <div style={{ color: '#dc3545', fontSize: 13, marginBottom: 12 }}>{error}</div>}
+          {!gpsAutorise ? (
+            <button className="save-button" onClick={autoriserGPS}>🔓 Autoriser l'accès GPS</button>
+          ) : (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+              <div style={{ background: '#d4edda', borderRadius: 6, padding: 12, fontSize: 14 }}>
+                ✅ GPS autorisé
+                {position && (
+                  <div style={{ marginTop: 6, fontFamily: 'monospace', fontSize: 13 }}>
+                    Lat: {position.lat.toFixed(5)} | Lng: {position.lng.toFixed(5)}<br/>
+                    Précision: ±{Math.round(position.accuracy)}m
+                  </div>
+                )}
+              </div>
+              <button className="save-button" onClick={envoyerPosition} disabled={envoi}>
+                {envoi ? '⏳ Envoi...' : '📡 Envoyer ma position'}
+              </button>
+              {lastSent && <div style={{ fontSize: 13, color: '#28a745' }}>✓ Dernière mise à jour : {lastSent}</div>}
+              <button className="cancel-button" onClick={() => { setGpsAutorise(false); setPosition(null); }}>
+                🔒 Révoquer l'accès GPS
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const Profil = ({ user, onUpdateUser }) => {
   const [activeTab, setActiveTab] = useState('Modifier le profil');
   const [isEditing, setIsEditing] = useState(false);
@@ -33,7 +115,7 @@ const Profil = ({ user, onUpdateUser }) => {
     }
   };
 
-  const tabs = ['Modifier le profil', 'Préférences', 'Sécurité'];
+  const tabs = ['Modifier le profil', 'Préférences', 'Sécurité', 'GPS'];
 
   const handleEdit = () => {
     setSuccess('');
@@ -193,6 +275,9 @@ const Profil = ({ user, onUpdateUser }) => {
         )}
         {activeTab === 'Sécurité' && (
           <div className="profil-content">Contenu de la sécurité</div>
+        )}
+        {activeTab === 'GPS' && (
+          <GPSTab />
         )}
       </div>
     </div>

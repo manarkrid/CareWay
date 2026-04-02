@@ -113,7 +113,7 @@ function App() {
     <div className="app debug-layout">
       <Sidebar currentPage={currentPage} setCurrentPage={setCurrentPage} onLogout={handleLogout} user={user} />
       <div className="main-content">
-        <Header user={user} onSearch={setGlobalSearch} onNavigate={setCurrentPage} />
+        <Header user={user} onSearch={setGlobalSearch} onNavigate={setCurrentPage} onLogout={handleLogout} />
         <main className="page-content">
           {renderPage()}
         </main>

@@ -1,4 +1,4 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Param, Res } from '@nestjs/common';
 import { EntrepriseService } from './entreprise.service';
 
 @Controller('entreprise')
@@ -39,5 +39,24 @@ export class EntrepriseController {
   @Get('notifications')
   getNotifications() {
     return this.entrepriseService.getNotifications();
+  }
+
+  // GET /api/entreprise/rapports
+  @Get('rapports')
+  getRapports() {
+    return this.entrepriseService.getRapports();
+  }
+
+  // GET /api/entreprise/rapport/:id/download
+  @Get('rapport/:id/download')
+  downloadReport(@Param('id') id: string, @Res() res) {
+    const csv = this.entrepriseService.downloadReport(id);
+    if (!csv) {
+      return res.status(404).json({ message: 'Rapport non trouvé' });
+    }
+
+    res.header('Content-Type', 'text/csv');
+    res.header('Content-Disposition', `attachment; filename="rapport-${id}.csv"`);
+    return res.send(csv);
   }
 }

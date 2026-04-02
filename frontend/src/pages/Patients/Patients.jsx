@@ -45,23 +45,32 @@ const Patients = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [patientsData, setPatientsData] = useState([]);
   const [filteredPatients, setFilteredPatients] = useState([]);
+  const [stats, setStats] = useState({ total: 1247, newThisMonth: 23, avgTrajets: 4.2, activePatients: 856 });
   
   const patientsPerPage = 8;
-  const totalPatients = 856;
 
-  // Générer plus de données pour la pagination (simulation)
+  // Charger les stats depuis le backend
   useEffect(() => {
-    const generatedPatients = [];
-    for (let i = 0; i < totalPatients; i++) {
-      const basePatient = initialPatients[i % 8];
-      generatedPatients.push({
-        ...basePatient,
-        id: i + 1,
-        name: `${basePatient.name} ${Math.floor(i / 8) + 1 > 1 ? `(${Math.floor(i / 8) + 1})` : ''}`.trim(),
+    fetch('http://localhost:3001/api/patients/stats')
+      .then(res => res.json())
+      .then(data => setStats(data))
+      .catch(() => {});
+  }, []);
+
+  // Charger les données depuis le backend
+  useEffect(() => {
+    fetch('http://localhost:3001/api/patients')
+      .then(res => res.json())
+      .then(data => {
+        const patients = data.data || data;
+        setPatientsData(patients);
+        setFilteredPatients(patients);
+      })
+      .catch(() => {
+        // Fallback sur les données locales
+        setPatientsData(initialPatients);
+        setFilteredPatients(initialPatients);
       });
-    }
-    setPatientsData(generatedPatients);
-    setFilteredPatients(generatedPatients);
   }, []);
 
   // Filtrer et trier les patients
@@ -193,19 +202,19 @@ const Patients = () => {
         <div className="patients-stats">
           <div className="stat-card">
             <h3>Total patients</h3>
-            <div className="stat-number">1,247</div>
+            <div className="stat-number">{stats.total?.toLocaleString()}</div>
           </div>
           <div className="stat-card">
             <h3>Nouveaux ce mois</h3>
-            <div className="stat-number">23</div>
+            <div className="stat-number">{stats.newThisMonth}</div>
           </div>
           <div className="stat-card">
             <h3>Trajets moyens/patient</h3>
-            <div className="stat-number">4.2</div>
+            <div className="stat-number">{stats.avgTrajets}</div>
           </div>
           <div className="stat-card">
             <h3>Patients actifs</h3>
-            <div className="stat-number">856</div>
+            <div className="stat-number">{stats.activePatients}</div>
           </div>
         </div>
 
@@ -269,15 +278,9 @@ const Patients = () => {
           </table>
 
            <div className="demandes-pagination">
-            <button className="pagination-arrow">‹</button>
-            {[1, 2, 3, 4].map(num => (
-              <button key={num} className={`page-number ${num === 1 ? 'active' : ''}`}>
-                {num}
-              </button>
-            ))}
-            <span className="pagination-dots">...</span>
-            <button className="page-number">6</button>
-            <button className="pagination-arrow">›</button>
+            <button className="pagination-arrow" onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1}>‹</button>
+            {renderPaginationButtons()}
+            <button className="pagination-arrow" onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === totalPages}>›</button>
           </div>
         </div>
       </div>

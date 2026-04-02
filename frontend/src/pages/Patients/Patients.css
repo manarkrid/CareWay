@@ -1,8 +1,9 @@
-/* Patients Page Container */
 .page-container {
   padding: 30px;
   background-color: #f8f9fa;
-  min-height: 100vh;
+  min-height: 100%;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .page-header {
@@ -10,6 +11,7 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 30px;
+  width: 100%;
 }
 
 .page-header h1 {

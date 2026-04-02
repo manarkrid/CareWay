@@ -1,8 +1,9 @@
-.page-content.full-width {
+.calendrier-wrapper {
   width: 100%;
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 20px;
+  max-width: none;
+  padding: 30px;
+  box-sizing: border-box;
+  min-height: 100%;
 }
 
 /* Header */
@@ -477,7 +478,7 @@
 
 .time-slots {
   overflow-y: auto;
-  max-height: 500px;
+  max-height: 600px;
 }
 
 .time-row {
@@ -604,3 +605,26 @@
     grid-template-columns: 1fr;
   }
 }
+/* 
+Statuts trajets */
+.trajet-statut.planifie { background: #cce5ff; color: #004085; }
+.trajet-statut.termine { background: #d4edda; color: #155724; }
+.trajet-statut.annule { background: #f8d7da; color: #721c24; }
+.trajet-statut.en-cours { background: #fff3cd; color: #856404; }
+
+/* Colonne aujourd'hui */
+.day-header.today-col { background: #e3f2fd; color: #1565c0; font-weight: 600; }
+.day-cell.today-col { background: #f0f7ff; }
+
+/* Événements dans la grille */
+.person-item {
+  border-radius: 4px;
+  padding: 4px 6px;
+  margin-bottom: 3px;
+  font-size: 11px;
+  color: #1565c0;
+  border-left: 3px solid #2196f3;
+  cursor: pointer;
+  line-height: 1.4;
+}
+.person-item:hover { opacity: 0.85; }

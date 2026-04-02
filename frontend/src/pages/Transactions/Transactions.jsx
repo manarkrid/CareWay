@@ -218,14 +218,13 @@ const Transactions = () => {
           </div>
 
           <div className="pagination">
-            <button className="pagination-btn">← Précédent</button>
+            <button className="pagination-btn" onClick={() => setCurrentPage(p => Math.max(1, p - 1))} disabled={currentPage === 1}>← Précédent</button>
             <div className="pagination-numbers">
-              <button className={`page-number ${currentPage === 1 ? 'active' : ''}`} onClick={() => setCurrentPage(1)}>1</button>
-              <button className={`page-number ${currentPage === 2 ? 'active' : ''}`} onClick={() => setCurrentPage(2)}>2</button>
-              <button className={`page-number ${currentPage === 3 ? 'active' : ''}`} onClick={() => setCurrentPage(3)}>3</button>
-              <button className={`page-number ${currentPage === 4 ? 'active' : ''}`} onClick={() => setCurrentPage(4)}>4</button>
+              {[1, 2, 3, 4].map(num => (
+                <button key={num} className={`page-number ${currentPage === num ? 'active' : ''}`} onClick={() => setCurrentPage(num)}>{num}</button>
+              ))}
             </div>
-            <button className="pagination-btn">Suivant →</button>
+            <button className="pagination-btn" onClick={() => setCurrentPage(p => Math.min(4, p + 1))} disabled={currentPage === 4}>Suivant →</button>
           </div>
         </div>
       </div>

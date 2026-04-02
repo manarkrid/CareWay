@@ -9,82 +9,24 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.DemandesService = void 0;
 const common_1 = require("@nestjs/common");
 let DemandesService = class DemandesService {
-    getAll() {
-        return [
-            {
-                id: 1,
-                name: 'Marie Dubois',
-                date: '30/06/25',
-                time: '10h15',
-                from: '4 rue Foch',
-                to: 'CHIC Castres Mazamet',
-                type: 'VSL',
-                direction: 'Aller-simple',
-                distance: '22km',
-                duration: '35mins',
-                status: 'Attente',
-                wait: '1h',
-                price: 54,
-            },
-            {
-                id: 2,
-                name: 'François Dupont',
-                date: '22/06/25',
-                time: '8h30',
-                from: '6 av. Trois',
-                to: 'Clinique du Sidobre',
-                type: 'VSL',
-                direction: 'Aller-simple',
-                distance: '22km',
-                duration: '26mins',
-                status: 'Attente',
-                wait: '30mins',
-                price: 43,
-            },
-            {
-                id: 3,
-                name: 'Anne Pichet',
-                date: '20/06/25',
-                time: '9h15',
-                from: '32 rue du Lilas',
-                to: 'EHPAD',
-                type: 'VSL',
-                direction: 'Aller-simple',
-                distance: '19km',
-                duration: '15mins',
-                status: 'Attente',
-                price: 36,
-            },
-            {
-                id: 4,
-                name: 'Jean-Paul Renard',
-                date: '18/06/25',
-                time: '11h00',
-                from: '5 bd Roosevelt',
-                to: 'Centre Médical du Soult',
-                type: 'TAXI',
-                direction: 'Aller-retour',
-                distance: '14km',
-                duration: '20mins',
-                status: 'Attente',
-                wait: '2h',
-                price: 42,
-            },
-            {
-                id: 5,
-                name: 'Sophie Martin',
-                date: '17/06/25',
-                time: '14h30',
-                from: '2 rue Gambetta',
-                to: 'Cabinet Médical Centre',
-                type: 'VSL',
-                direction: 'Aller-simple',
-                distance: '8km',
-                duration: '12mins',
-                status: 'Attente',
-                price: 25,
-            },
+    constructor() {
+        this.demandes = [
+            { id: 1, name: 'Marie Dubois', date: '30/06/25', time: '10h15', from: '4 rue Foch', to: 'CHIC Castres Mazamet', type: 'VSL', direction: 'Aller-simple', distance: '22km', duration: '35mins', status: 'Attente', wait: '1h', price: 54 },
+            { id: 2, name: 'François Dupont', date: '22/06/25', time: '8h30', from: '6 av. Trois', to: 'Clinique du Sidobre', type: 'VSL', direction: 'Aller-simple', distance: '22km', duration: '26mins', status: 'Attente', wait: '30mins', price: 43 },
+            { id: 3, name: 'Anne Pichet', date: '20/06/25', time: '9h15', from: '32 rue du Lilas', to: 'EHPAD', type: 'VSL', direction: 'Aller-simple', distance: '19km', duration: '15mins', status: 'Attente', price: 36 },
+            { id: 4, name: 'Jean-Paul Renard', date: '18/06/25', time: '11h00', from: '5 bd Roosevelt', to: 'Centre Médical du Soult', type: 'TAXI', direction: 'Aller-retour', distance: '14km', duration: '20mins', status: 'Attente', wait: '2h', price: 42 },
+            { id: 5, name: 'Sophie Martin', date: '17/06/25', time: '14h30', from: '2 rue Gambetta', to: 'Cabinet Médical Centre', type: 'VSL', direction: 'Aller-simple', distance: '8km', duration: '12mins', status: 'Attente', price: 25 },
         ];
+    }
+    getAll() {
+        return this.demandes;
+    }
+    updateStatut(id, statut) {
+        const demande = this.demandes.find(d => d.id === id);
+        if (!demande)
+            return { error: 'Demande non trouvée' };
+        demande.status = statut;
+        return demande;
     }
     getPriceMarkers() {
         return [

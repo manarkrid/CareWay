@@ -1,16 +1,70 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import './Demandes.css';
 
-const createPriceIcon = (price) => {
-  return L.divIcon({
-    className: 'custom-price-marker',
-    html: `<div class="price-marker-content">${price}€</div>`,
-    iconSize: [40, 30],
-    iconAnchor: [20, 15]
-  });
+const createPriceIcon = (price) => L.divIcon({
+  className: 'custom-price-marker',
+  html: `<div class="price-marker-content">${price}€</div>`,
+  iconSize: [40, 30], iconAnchor: [20, 15]
+});
+
+const priceMarkers = [
+  { id: 1, price: 36, position: [43.605, 2.240] }, { id: 2, price: 25, position: [43.610, 2.245] },
+  { id: 3, price: 35, position: [43.602, 2.235] }, { id: 4, price: 54, position: [43.615, 2.250] },
+  { id: 5, price: 42, position: [43.595, 2.230] }, { id: 6, price: 43, position: [43.608, 2.242] },
+  { id: 7, price: 51, position: [43.601, 2.248] }, { id: 8, price: 22, position: [43.590, 2.220] },
+  { id: 9, price: 23, position: [43.612, 2.238] }, { id: 10, price: 34, position: [43.606, 2.246] },
+];
+
+// Modal détail mission
+const DetailModal = ({ demande, onClose, onUpdate }) => {
+  const [notes, setNotes] = useState(demande.notes || '');
+  const [statut, setStatut] = useState(demande.status || 'Attente');
+
+  const handleSave = () => {
+    onUpdate(demande.id, { statut, notes });
+    onClose();
+  };
+
+  return (
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="modal-content" onClick={e => e.stopPropagation()}>
+        <div className="modal-header">
+          <h2>Détail de la mission</h2>
+          <button className="modal-close" onClick={onClose}>✕</button>
+        </div>
+        <div className="modal-body">
+          <div className="detail-row"><span className="detail-label">Patient</span><span>{demande.name}</span></div>
+          <div className="detail-row"><span className="detail-label">Date</span><span>{demande.date} à {demande.time}</span></div>
+          <div className="detail-row"><span className="detail-label">Départ</span><span>{demande.from}</span></div>
+          <div className="detail-row"><span className="detail-label">Arrivée</span><span>{demande.to}</span></div>
+          <div className="detail-row"><span className="detail-label">Type</span><span>{demande.type} • {demande.direction}</span></div>
+          <div className="detail-row"><span className="detail-label">Distance</span><span>{demande.distance} • {demande.duration}</span></div>
+          <div className="detail-row"><span className="detail-label">Prix</span><span className="detail-price">{demande.price}€</span></div>
+          <div className="detail-row">
+            <span className="detail-label">Statut</span>
+            <select value={statut} onChange={e => setStatut(e.target.value)} className="detail-select">
+              <option>Attente</option>
+              <option>Acceptée</option>
+              <option>Refusée</option>
+              <option>En cours</option>
+              <option>Terminée</option>
+            </select>
+          </div>
+          <div className="detail-notes">
+            <span className="detail-label">Notes</span>
+            <textarea value={notes} onChange={e => setNotes(e.target.value)} placeholder="Ajouter des notes..." rows={3} />
+          </div>
+        </div>
+        <div className="modal-footer">
+          <button className="btn-cancel" onClick={onClose}>Annuler</button>
+          <button className="btn-save" onClick={handleSave}>Enregistrer</button>
+        </div>
+      </div>
+    </div>
+  );
 };
 
 const Demandes = ({ filterQuery = '' }) => {
@@ -18,118 +72,66 @@ const Demandes = ({ filterQuery = '' }) => {
   const [mutualise, setMutualise] = useState(false);
   const [mapInstance, setMapInstance] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
+  const [demandes, setDemandes] = useState([]);
+  const [selectedDemande, setSelectedDemande] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
+
+  useEffect(() => {
+    fetch('http://localhost:3001/api/demandes')
+      .then(res => res.json())
+      .then(data => setDemandes(data))
+      .catch(() => setDemandes([
+        { id: 1, name: 'Marie Dubois', date: '30/06/25', time: '10h15', from: '4 rue Foch', to: 'CHIC Castres Mazamet', type: 'VSL', direction: 'Aller-simple', distance: '22km', duration: '35mins', status: 'Attente', wait: '1h', price: 54 },
+        { id: 2, name: 'François Dupont', date: '22/06/25', time: '8h30', from: '6 av. Trois', to: 'Clinique du Sidobre', type: 'VSL', direction: 'Aller-simple', distance: '22km', duration: '26mins', status: 'Attente', wait: '30mins', price: 43 },
+        { id: 3, name: 'Anne Pichet', date: '20/06/25', time: '9h15', from: '32 rue du Lilas', to: 'EHPAD', type: 'VSL', direction: 'Aller-simple', distance: '19km', duration: '15mins', status: 'Attente', price: 36 },
+      ]));
+  }, []);
+
+  const handleStatut = (id, statut) => {
+    fetch(`http://localhost:3001/api/demandes/${id}/statut`, {
+      method: 'PATCH', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ statut })
+    })
+      .then(res => res.json())
+      .then(updated => setDemandes(prev => prev.map(d => d.id === id ? { ...d, status: updated.status } : d)))
+      .catch(() => setDemandes(prev => prev.map(d => d.id === id ? { ...d, status: statut } : d)));
+  };
+
+  const handleUpdate = (id, data) => {
+    handleStatut(id, data.statut);
+    setDemandes(prev => prev.map(d => d.id === id ? { ...d, notes: data.notes } : d));
+  };
 
   const DEFAULT_CENTER = [43.6044, 2.2403];
   const DEFAULT_ZOOM = 13;
 
-  const handleZoomIn = () => { if (mapInstance) mapInstance.zoomIn(); };
-  const handleZoomOut = () => { if (mapInstance) mapInstance.zoomOut(); };
-  const handleReset = () => { if (mapInstance) mapInstance.flyTo(DEFAULT_CENTER, DEFAULT_ZOOM); };
-  const handleGeolocate = () => {
-    if ('geolocation' in navigator) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          if (mapInstance) {
-            mapInstance.flyTo([position.coords.latitude, position.coords.longitude], 14);
-          }
-        },
-        () => {
-          alert("Impossible de récupérer votre position.");
-        }
-      );
-    } else {
-      alert("La géolocalisation n'est pas supportée par votre navigateur.");
-    }
-  };
-
-  const mapControls = [
-    { icon: '⊕', action: handleZoomIn, title: 'Zoom avant' },
-    { icon: '⊖', action: handleZoomOut, title: 'Zoom arrière' },
-    { icon: '◎', action: handleGeolocate, title: 'Ma position' },
-    { icon: '⟲', action: handleReset, title: 'Réinitialiser la vue' }
-  ];
-
   const handleSearch = async (e) => {
     e.preventDefault();
     if (!searchQuery.trim() || !mapInstance) return;
-
     try {
-      const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&limit=1&q=${encodeURIComponent(searchQuery)}`);
-      const data = await response.json();
-      if (data && data.length > 0) {
-        const { lat, lon } = data[0];
-        mapInstance.flyTo([parseFloat(lat), parseFloat(lon)], 13);
-      } else {
-        alert("Lieu introuvable. Veuillez essayer avec une autre orthographe ou préciser le code postal.");
-      }
-    } catch (err) {
-      console.error(err);
-      alert("Erreur réseau lors de la recherche du lieu.");
-    }
+      const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&limit=1&q=${encodeURIComponent(searchQuery)}`);
+      const data = await res.json();
+      if (data[0]) mapInstance.flyTo([parseFloat(data[0].lat), parseFloat(data[0].lon)], 13);
+    } catch {}
   };
 
-  const demandes = [
-    {
-      id: 1,
-      name: 'Marie Dubois',
-      date: '30/06/25',
-      time: '10h15',
-      from: '4 rue Foch',
-      to: 'CHIC Castres Mazamet',
-      type: 'VSL',
-      direction: 'Aller-simple',
-      distance: '22km',
-      duration: '35mins',
-      status: 'Attente',
-      wait: '1h',
-      price: 54
-    },
-    {
-      id: 2,
-      name: 'François Dupont',
-      date: '22/06/25',
-      time: '8h30',
-      from: '6 av. Trois',
-      to: 'Clinique du Sidobre',
-      type: 'VSL',
-      direction: 'Aller-simple',
-      distance: '22km',
-      duration: '26mins',
-      status: 'Attente',
-      wait: '30mins',
-      price: 43
-    },
-    {
-      id: 3,
-      name: 'Anne Pichet',
-      date: '20/06/25',
-      time: '9h15',
-      from: '32 rue du Lilas',
-      to: 'EHPAD',
-      type: 'VSL',
-      direction: 'Aller-simple',
-      distance: '19km',
-      duration: '15mins',
-      price: 36
-    }
-  ];
+  const filtered = demandes.filter(d =>
+    (d.name?.toLowerCase().includes(filterQuery.toLowerCase())) ||
+    (d.from?.toLowerCase().includes(filterQuery.toLowerCase())) ||
+    (d.to?.toLowerCase().includes(filterQuery.toLowerCase()))
+  );
 
-  const priceMarkers = [
-    { id: 1, price: 36, position: [43.605, 2.240] },
-    { id: 2, price: 25, position: [43.610, 2.245] },
-    { id: 3, price: 35, position: [43.602, 2.235] },
-    { id: 4, price: 54, position: [43.615, 2.250] },
-    { id: 5, price: 42, position: [43.595, 2.230] },
-    { id: 6, price: 43, position: [43.608, 2.242] },
-    { id: 7, price: 51, position: [43.601, 2.248] },
-    { id: 8, price: 22, position: [43.590, 2.220] },
-    { id: 9, price: 23, position: [43.612, 2.238] },
-    { id: 10, price: 34, position: [43.606, 2.246] },
-    { id: 11, price: 35, position: [43.598, 2.234] },
-    { id: 12, price: 50, position: [43.620, 2.255] },
-    { id: 13, price: 45, position: [43.592, 2.228] },
-    { id: 14, price: 43, position: [43.618, 2.240] }
-  ];
+  const totalPages = Math.ceil(filtered.length / itemsPerPage);
+  const paginated = filtered.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+
+  const getStatusClass = (status) => {
+    if (status === 'Acceptée') return 'status-accepted';
+    if (status === 'Refusée') return 'status-refused';
+    if (status === 'En cours') return 'status-ongoing';
+    if (status === 'Terminée') return 'status-done';
+    return 'status-waiting';
+  };
 
   return (
     <div className="demandes-page">
@@ -139,155 +141,101 @@ const Demandes = ({ filterQuery = '' }) => {
 
       <div className="demandes-main-content">
         <div className="demandes-left-column">
-          {/* Controls */}
           <div className="demandes-controls-bar">
             <div className="controls-left-group">
-              <span className="demandes-info">23 résultats • Juin 14 - 30</span>
-
-              <button className="btn-plus">⊕ Plus</button>
-
+              <span className="demandes-info">{filtered.length} résultats</span>
               <div className="view-toggle-group">
-                <button
-                  className={`view-btn ${view === 'grid' ? 'active' : ''}`}
-                  onClick={() => setView('grid')}
-                >
-                  ⊞
-                </button>
-                <button
-                  className={`view-btn ${view === 'list' ? 'active' : ''}`}
-                  onClick={() => setView('list')}
-                >
-                  ☰
-                </button>
+                <button className={`view-btn ${view === 'grid' ? 'active' : ''}`} onClick={() => setView('grid')}>⊞</button>
+                <button className={`view-btn ${view === 'list' ? 'active' : ''}`} onClick={() => setView('list')}>☰</button>
               </div>
             </div>
-
             <div className="controls-right-group">
               <div className="mutualise-toggle">
                 <span>Mutualisé</span>
                 <label className="toggle-switch">
-                  <input
-                    type="checkbox"
-                    checked={mutualise}
-                    onChange={() => setMutualise(!mutualise)}
-                  />
+                  <input type="checkbox" checked={mutualise} onChange={() => setMutualise(!mutualise)} />
                   <span className="toggle-slider"></span>
                 </label>
               </div>
-
-              <div className="sort-filter">
-                Trier par : <span className="sort-value">Prix</span>
-              </div>
+              <div className="sort-filter">Trier par : <span className="sort-value">Prix</span></div>
             </div>
           </div>
 
-          {/* Demandes Cards */}
           <div className="demandes-list">
-            {demandes
-              .filter(d =>
-                (d.name && d.name.toLowerCase().includes(filterQuery.toLowerCase())) ||
-                (d.from && d.from.toLowerCase().includes(filterQuery.toLowerCase())) ||
-                (d.to && d.to.toLowerCase().includes(filterQuery.toLowerCase()))
-              )
-              .map(demande => (
-                <div key={demande.id} className="demande-card">
-                  <div className="demande-header-row">
-                    <div>
-                      <h3>{demande.name}</h3>
-                      <span className="demande-date">{demande.date} • {demande.time}</span>
-                    </div>
+            {paginated.map(demande => (
+              <div key={demande.id} className={`demande-card ${getStatusClass(demande.status)}`}>
+                <div className="demande-header-row">
+                  <div>
+                    <h3>{demande.name}</h3>
+                    <span className="demande-date">{demande.date} • {demande.time}</span>
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 4 }}>
                     <div className="demande-price">{demande.price}€</div>
-                  </div>
-
-                  <div className="demande-route">
-                    <span className="route-icon">📍</span>
-                    <div className="route-details">
-                      <div className="route-text">{demande.from} &gt; {demande.to}</div>
-                      <div className="route-meta">
-                        {demande.type}• {demande.direction}• {demande.distance}• {demande.duration}
-                        {demande.status && `• ${demande.status}`}
-                        {demande.wait && `• ${demande.wait}`}
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="demande-actions">
-                    <button className="btn-accepter">🚗 Accepter</button>
-                    <button className="btn-refuser">✕ Refuser</button>
+                    <span className={`status-badge ${getStatusClass(demande.status)}`}>{demande.status}</span>
                   </div>
                 </div>
-              ))}
+                <div className="demande-route">
+                  <span className="route-icon">📍</span>
+                  <div className="route-details">
+                    <div className="route-text">{demande.from} → {demande.to}</div>
+                    <div className="route-meta">{demande.type} • {demande.direction} • {demande.distance} • {demande.duration}{demande.wait && ` • attente ${demande.wait}`}</div>
+                  </div>
+                </div>
+                <div className="demande-actions">
+                  <button className="btn-detail" onClick={() => setSelectedDemande(demande)}>📋 Détail</button>
+                  <button className="btn-accepter" onClick={() => handleStatut(demande.id, 'Acceptée')}
+                    disabled={demande.status === 'Acceptée' || demande.status === 'Refusée'}>
+                    🚗 {demande.status === 'Acceptée' ? 'Acceptée ✓' : 'Accepter'}
+                  </button>
+                  <button className="btn-refuser" onClick={() => handleStatut(demande.id, 'Refusée')}
+                    disabled={demande.status === 'Acceptée' || demande.status === 'Refusée'}>
+                    ✕ {demande.status === 'Refusée' ? 'Refusée' : 'Refuser'}
+                  </button>
+                </div>
+              </div>
+            ))}
           </div>
 
-          {/* Pagination */}
-          <div className="demandes-pagination">
-            <button className="pagination-arrow">‹</button>
-            {[1, 2, 3, 4].map(num => (
-              <button key={num} className={`page-number ${num === 1 ? 'active' : ''}`}>
-                {num}
-              </button>
-            ))}
-            <span className="pagination-dots">...</span>
-            <button className="page-number">6</button>
-            <button className="pagination-arrow">›</button>
-          </div>
+          {/* Pagination Demandes */}
+          {totalPages > 1 && (
+            <div className="demandes-pagination">
+              <button className="pagination-arrow" onClick={() => setCurrentPage(p => Math.max(1, p - 1))} disabled={currentPage === 1}>‹</button>
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map(num => (
+                <button key={num} className={`page-number ${currentPage === num ? 'active' : ''}`} onClick={() => setCurrentPage(num)}>{num}</button>
+              ))}
+              <button className="pagination-arrow" onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))} disabled={currentPage === totalPages}>›</button>
+            </div>
+          )}
         </div>
 
-        {/* Right Column - Map */}
         <div className="demandes-map-section">
           <div className="map-container">
-            <div className="map-search" style={{ position: 'absolute', top: '16px', left: '50%', transform: 'translateX(-50%)', zIndex: 1000 }}>
+            <div style={{ position: 'absolute', top: 16, left: '50%', transform: 'translateX(-50%)', zIndex: 1000 }}>
               <form className="map-search-form" onSubmit={handleSearch}>
-                <input
-                  type="text"
-                  className="map-search-input"
-                  placeholder="Rechercher une ville, une adresse..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                />
+                <input className="map-search-input" placeholder="Rechercher une adresse..." value={searchQuery} onChange={e => setSearchQuery(e.target.value)} />
                 <button type="submit" className="map-search-btn-icon">🔍</button>
               </form>
             </div>
-
             <div className="map-controls">
-              {mapControls.map((control, i) => (
-                <button
-                  key={i}
-                  className="map-control-btn"
-                  onClick={control.action}
-                  title={control.title}
-                >
-                  {control.icon}
-                </button>
-              ))}
+              <button className="map-control-btn" onClick={() => mapInstance?.zoomIn()} title="Zoom +">⊕</button>
+              <button className="map-control-btn" onClick={() => mapInstance?.zoomOut()} title="Zoom -">⊖</button>
+              <button className="map-control-btn" onClick={() => mapInstance?.flyTo(DEFAULT_CENTER, DEFAULT_ZOOM)} title="Reset">⟲</button>
             </div>
-
-            <MapContainer
-              center={DEFAULT_CENTER}
-              zoom={DEFAULT_ZOOM}
-              style={{ height: '100%', width: '100%', zIndex: 1 }}
-              zoomControl={false}
-              ref={setMapInstance}
-            >
-              <TileLayer
-                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
-              />
-              {priceMarkers.map(marker => (
-                <Marker
-                  key={marker.id}
-                  position={marker.position}
-                  icon={createPriceIcon(marker.price)}
-                >
-                  <Popup>
-                    Trajet potentiel : <strong>{marker.price}€</strong>
-                  </Popup>
+            <MapContainer center={DEFAULT_CENTER} zoom={DEFAULT_ZOOM} style={{ height: '100%', width: '100%', zIndex: 1 }} zoomControl={false} ref={setMapInstance}>
+              <TileLayer attribution='&copy; OpenStreetMap' url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png" />
+              {priceMarkers.map(m => (
+                <Marker key={m.id} position={m.position} icon={createPriceIcon(m.price)}>
+                  <Popup>Trajet : <strong>{m.price}€</strong></Popup>
                 </Marker>
               ))}
             </MapContainer>
           </div>
         </div>
       </div>
+
+      {selectedDemande && (
+        <DetailModal demande={selectedDemande} onClose={() => setSelectedDemande(null)} onUpdate={handleUpdate} />
+      )}
     </div>
   );
 };

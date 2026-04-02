@@ -49,4 +49,14 @@ export declare class EntrepriseController {
         date: string;
         priorite: string;
     }[];
+    getRapports(): {
+        id: number;
+        titre: string;
+        type: string;
+        date: string;
+        trajets: number;
+        revenus: string;
+        tauxAcceptation: string;
+    }[];
+    downloadReport(id: string, res: any): any;
 }

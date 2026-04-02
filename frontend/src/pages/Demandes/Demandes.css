@@ -285,7 +285,7 @@
 }
 
 .demandes-map-section {
-  background: white;
+  background: rgba(255, 253, 253, 0.03);
   border-radius: 12px;
   position: sticky;
   top: 24px;
@@ -293,7 +293,7 @@
 
 .map-container {
   position: relative;
-  width: 50%;
+  width: 62%;
   height: 660px;
   background: #e9ecef;
   border-radius: 12px;
@@ -427,4 +427,211 @@
   .map-container {
     height: 500px;
   }
+}
+
+/* Styles pour les statuts des demandes */
+.btn-accepter:disabled,
+.btn-refuser:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-accepter:disabled {
+  background-color: #28a745;
+  color: white;
+}
+
+.btn-refuser:disabled {
+  background-color: #dc3545;
+  color: white;
+}
+
+/* Modal détail mission */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+}
+
+.modal-content {
+  background: white;
+  border-radius: 12px;
+  width: 480px;
+  max-width: 95vw;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.modal-header h2 {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+  color: #6c757d;
+}
+
+.modal-body {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.detail-label {
+  font-size: 13px;
+  color: #6c757d;
+  font-weight: 500;
+}
+
+.detail-price {
+  font-size: 20px;
+  font-weight: 700;
+  color: #2c3e50;
+}
+
+.detail-select {
+  border: 1px solid #dee2e6;
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-size: 14px;
+}
+
+.detail-notes {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.detail-notes textarea {
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  padding: 10px;
+  font-size: 14px;
+  resize: vertical;
+  font-family: inherit;
+}
+
+.modal-footer {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  padding: 16px 24px;
+  border-top: 1px solid #e9ecef;
+}
+
+.btn-cancel {
+  background: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  padding: 10px 20px;
+  cursor: pointer;
+}
+
+.btn-save {
+  background: #4169E1;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 20px;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+/* Bouton détail */
+.btn-detail {
+  background: #f0f4ff;
+  color: #4169E1;
+  border: 1px solid #c7d7ff;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+/* Badges statut */
+.status-badge {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: 12px;
+}
+
+.status-badge.status-accepted {
+  background: #d4edda;
+  color: #155724;
+}
+
+.status-badge.status-refused {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+.status-badge.status-ongoing {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.status-badge.status-done {
+  background: #e2e3e5;
+  color: #383d41;
+}
+
+.status-badge.status-waiting {
+  background: #cce5ff;
+  color: #004085;
+}
+
+/* Carte avec bordure selon statut */
+.demande-card.status-accepted {
+  border-left: 4px solid #28a745;
+}
+
+.demande-card.status-refused {
+  border-left: 4px solid #dc3545;
+  opacity: 0.7;
+}
+
+.demande-card.status-done {
+  border-left: 4px solid #6c757d;
+  opacity: 0.8;
+}
+
+/* Boutons disabled */
+.btn-accepter:disabled,
+.btn-refuser:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-accepter:disabled {
+  background: #28a745;
+  color: white;
+}
+
+.btn-refuser:disabled {
+  background: #dc3545;
+  color: white;
 }

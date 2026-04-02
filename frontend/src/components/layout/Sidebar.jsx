@@ -54,17 +54,6 @@ const Sidebar = ({ currentPage, setCurrentPage, onLogout, user }) => {
           <span>Profil</span>
         </div>
 
-        <div
-          className="logout-section"
-          onClick={onLogout}
-          style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '12px 16px', color: '#ef4444', cursor: 'pointer', fontWeight: '500', marginTop: '8px', borderRadius: '8px', transition: 'background-color 0.2s' }}
-          onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#fee2e2'}
-          onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
-        >
-          <span className="logout-icon" style={{ fontSize: '20px' }}>🚪</span>
-          <span>Se déconnecter</span>
-        </div>
-
 
         <div className="trip-info">
           <div className="trip-badge">

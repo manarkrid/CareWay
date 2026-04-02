@@ -259,6 +259,7 @@
   color: #64748b;
   margin-top: 2px;
 }
+
 .notification-wrapper {
   position: relative;
 }
@@ -270,7 +271,7 @@
   width: 360px;
   background: white;
   border-radius: 12px;
-  box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
   border: 1px solid #e2e8f0;
   z-index: 2000;
   animation: slideDown 0.2s cubic-bezier(0.16, 1, 0.3, 1);
@@ -296,6 +297,7 @@
   cursor: pointer;
   font-weight: 500;
 }
+
 .mark-read-btn:hover {
   text-decoration: underline;
 }
@@ -311,15 +313,19 @@
   border-bottom: 1px solid #f1f5f9;
   transition: background 0.15s;
 }
+
 .notif-item:last-child {
   border-bottom: none;
 }
+
 .notif-item:hover {
   background: #f8fafc;
 }
+
 .notif-item.unread {
   background: #f0f9ff;
 }
+
 .notif-item.unread:hover {
   background: #e0f2fe;
 }
@@ -368,4 +374,31 @@
   text-align: center;
   color: #94a3b8;
   font-size: 14px;
+}
+
+.header-logout-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: transparent;
+  border: 1.5px solid #4da3ff;
+  border-radius: 8px;
+  color: #4da3ff;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.header-logout-btn:hover {
+  background: #4da3ff;
+  color: white;
+  box-shadow: 0 4px 12px rgba(255, 77, 77, 0.3);
+  transform: translateY(-1px);
+}
+
+.header-logout-btn:active {
+  transform: translateY(0);
+  box-shadow: none;
 }

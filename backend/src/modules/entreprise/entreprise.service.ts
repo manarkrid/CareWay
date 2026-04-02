@@ -63,4 +63,22 @@ export class EntrepriseService {
       { id: 4, type: 'info', message: '8 télétransmissions en attente de validation', date: '01/03/2026', priorite: 'haute' },
     ];
   }
+
+  getRapports() {
+    return [
+      { id: 1, titre: 'Rapport mensuel - Mars 2026', type: 'Mensuel', date: '01/04/2026', trajets: 342, revenus: '12 450€', tauxAcceptation: '94%' },
+      { id: 2, titre: 'Rapport mensuel - Février 2026', type: 'Mensuel', date: '01/03/2026', trajets: 298, revenus: '10 820€', tauxAcceptation: '91%' },
+      { id: 3, titre: 'Rapport mensuel - Janvier 2026', type: 'Mensuel', date: '01/02/2026', trajets: 315, revenus: '11 340€', tauxAcceptation: '93%' },
+      { id: 4, titre: 'Rapport annuel - 2025', type: 'Annuel', date: '01/01/2026', trajets: 3342, revenus: '115 420€', tauxAcceptation: '92%' },
+    ];
+  }
+
+  downloadReport(id: string) {
+    const reports = this.getRapports();
+    const report = reports.find(r => r.id === parseInt(id));
+    if (!report) return null;
+
+    // Simulate CSV content
+    return `Titre,Type,Date,Trajets,Revenus,Taux Acceptation\n${report.titre},${report.type},${report.date},${report.trajets},"${report.revenus}",${report.tauxAcceptation}`;
+  }
 }

@@ -1,23 +1,18 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import './EquipeSection.css';
 
 const EquipeSection = () => {
-  const equipeData = [
-    {
-      nom: 'Loic Dupont',
-      role: 'Ambulancier',
-      absence: 2,
-      activite: 90,
-      statut: 'Disponible'
-    },
-    {
-      nom: 'Pierre Bois',
-      role: 'Chauffeur',
-      absence: 1,
-      activite: 95,
-      statut: 'En trajet'
-    }
-  ];
+  const [equipeData, setEquipeData] = useState([]);
+
+  useEffect(() => {
+    fetch('http://localhost:3001/api/entreprise/equipe')
+      .then(res => res.json())
+      .then(data => setEquipeData(data))
+      .catch(() => setEquipeData([
+        { nom: 'Loic Dupont', emplacement: 'Castres', absence: 2, activite: 90, statut: 'Disponible' },
+        { nom: 'Pierre Bois', emplacement: 'Toulouse', absence: 1, activite: 95, statut: 'En trajet' },
+      ]));
+  }, []);
 
   return (
     <div className="section equipe-section">
@@ -34,7 +29,7 @@ const EquipeSection = () => {
           <thead>
             <tr>
               <th>Nom de l'employé</th>
-              <th>Rôle</th>
+              <th>Emplacement</th>
               <th>Absence</th>
               <th>Taux d'activité</th>
               <th>Statut</th>
@@ -49,13 +44,9 @@ const EquipeSection = () => {
                     <span>{employee.nom}</span>
                   </div>
                 </td>
-                <td>{employee.role}</td>
+                <td>{employee.emplacement}</td>
                 <td>{employee.absence}</td>
-                <td>
-                  <div className="activity-rate">
-                    <span>+{employee.activite}%</span>
-                  </div>
-                </td>
+                <td><span className="activity-rate">+{employee.activite}%</span></td>
                 <td>
                   <span className={`status ${employee.statut === 'Disponible' ? 'available' : 'busy'}`}>
                     {employee.statut}

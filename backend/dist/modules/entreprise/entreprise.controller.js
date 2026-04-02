@@ -8,6 +8,9 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.EntrepriseController = void 0;
 const common_1 = require("@nestjs/common");
@@ -33,6 +36,18 @@ let EntrepriseController = class EntrepriseController {
     }
     getNotifications() {
         return this.entrepriseService.getNotifications();
+    }
+    getRapports() {
+        return this.entrepriseService.getRapports();
+    }
+    downloadReport(id, res) {
+        const csv = this.entrepriseService.downloadReport(id);
+        if (!csv) {
+            return res.status(404).json({ message: 'Rapport non trouvé' });
+        }
+        res.header('Content-Type', 'text/csv');
+        res.header('Content-Disposition', `attachment; filename="rapport-${id}.csv"`);
+        return res.send(csv);
     }
 };
 exports.EntrepriseController = EntrepriseController;
@@ -72,6 +87,20 @@ __decorate([
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", void 0)
 ], EntrepriseController.prototype, "getNotifications", null);
+__decorate([
+    (0, common_1.Get)('rapports'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], EntrepriseController.prototype, "getRapports", null);
+__decorate([
+    (0, common_1.Get)('rapport/:id/download'),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Object]),
+    __metadata("design:returntype", void 0)
+], EntrepriseController.prototype, "downloadReport", null);
 exports.EntrepriseController = EntrepriseController = __decorate([
     (0, common_1.Controller)('entreprise'),
     __metadata("design:paramtypes", [entreprise_service_1.EntrepriseService])

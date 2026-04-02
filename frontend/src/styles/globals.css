@@ -1,0 +1,40 @@
+/* Styles globaux partagés */
+
+.stat-card {
+  background: white;
+  padding: 24px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  transition: transform 0.2s ease;
+  box-sizing: border-box;
+}
+.stat-card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); }
+.stat-card h3 { font-size: 14px; color: #6c757d; margin-bottom: 12px; font-weight: 500; }
+.stat-number { font-size: 32px; font-weight: 700; color: #333; margin-bottom: 8px; }
+
+.section {
+  background: white; border-radius: 12px; padding: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); width: 100%; box-sizing: border-box;
+}
+.section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+.section-header h2 { font-size: 20px; font-weight: 600; color: #333; }
+
+.btn-primary { background: #2196f3; color: white; border: none; padding: 8px 16px; border-radius: 6px; font-size: 14px; cursor: pointer; transition: background-color 0.2s; }
+.btn-primary:hover { background: #1976d2; }
+.btn-filter { background: #f8f9fa; color: #333; border: 1px solid #e9ecef; padding: 8px 16px; border-radius: 6px; font-size: 14px; cursor: pointer; }
+.btn-filter:hover { background: #e9ecef; }
+
+/* Formulaires inline CRUD */
+.inline-form {
+  background: #f8f9fa; border: 1px solid #dee2e6; border-radius: 8px;
+  padding: 16px; margin-bottom: 16px; display: flex; flex-wrap: wrap; gap: 10px; align-items: center;
+}
+.inline-form input, .inline-form select {
+  border: 1px solid #dee2e6; border-radius: 6px; padding: 8px 12px;
+  font-size: 14px; min-width: 140px; flex: 1;
+}
+.inline-form .form-actions { display: flex; gap: 8px; }
+
+.btn-icon { background: none; border: none; cursor: pointer; font-size: 16px; padding: 4px 6px; border-radius: 4px; transition: background 0.2s; }
+.btn-icon:hover { background: #f0f0f0; }

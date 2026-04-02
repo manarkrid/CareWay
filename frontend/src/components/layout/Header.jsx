@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import './Header.css';
 
-const Header = ({ user, onSearch, onNavigate }) => {
+const Header = ({ user, onSearch, onNavigate, onLogout }) => {
   // --- Search State ---
   const [query, setQuery] = useState('');
   const [results, setResults] = useState({ pages: [], patients: [], demandes: [] });
@@ -102,7 +102,7 @@ const Header = ({ user, onSearch, onNavigate }) => {
           <span className="search-icon">🔍</span>
           <input
             type="text"
-            placeholder="Recherche globale (patients, trajets...)"
+            placeholder="Recherche globale"
             className="search-input"
             value={query}
             onChange={handleSearchChange}
@@ -207,6 +207,16 @@ const Header = ({ user, onSearch, onNavigate }) => {
             </div>
           )}
         </div>
+
+        <button className="header-logout-btn" onClick={onLogout} title="Se déconnecter">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24"
+            fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+            <polyline points="16 17 21 12 16 7" />
+            <line x1="21" y1="12" x2="9" y2="12" />
+          </svg>
+          <span>Se déconnecter</span>
+        </button>
       </div>
     </header>
   );

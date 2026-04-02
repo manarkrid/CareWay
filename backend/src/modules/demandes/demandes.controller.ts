@@ -1,4 +1,4 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Patch, Param, Body } from '@nestjs/common';
 import { DemandesService } from './demandes.service';
 
 @Controller('demandes')
@@ -15,5 +15,11 @@ export class DemandesController {
   @Get('price-markers')
   getPriceMarkers() {
     return this.demandesService.getPriceMarkers();
+  }
+
+  // PATCH /api/demandes/:id/statut
+  @Patch(':id/statut')
+  updateStatut(@Param('id') id: string, @Body() body: { statut: string }) {
+    return this.demandesService.updateStatut(Number(id), body.statut);
   }
 }

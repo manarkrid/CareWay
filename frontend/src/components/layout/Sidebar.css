@@ -7,6 +7,8 @@
   flex-direction: column;
   height: 100vh;
   flex-shrink: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 /* Responsive pour écrans plus petits */
