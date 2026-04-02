@@ -1,5 +1,36 @@
 export declare class DemandesService {
-    getDemandes(): Promise<{
-        message: string;
-    }>;
+    getAll(): ({
+        id: number;
+        name: string;
+        date: string;
+        time: string;
+        from: string;
+        to: string;
+        type: string;
+        direction: string;
+        distance: string;
+        duration: string;
+        status: string;
+        wait: string;
+        price: number;
+    } | {
+        id: number;
+        name: string;
+        date: string;
+        time: string;
+        from: string;
+        to: string;
+        type: string;
+        direction: string;
+        distance: string;
+        duration: string;
+        status: string;
+        price: number;
+        wait?: undefined;
+    })[];
+    getPriceMarkers(): {
+        price: number;
+        left: string;
+        top: string;
+    }[];
 }

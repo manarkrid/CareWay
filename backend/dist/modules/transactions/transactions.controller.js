@@ -16,8 +16,14 @@ let TransactionsController = class TransactionsController {
     constructor(transactionsService) {
         this.transactionsService = transactionsService;
     }
-    async getTransactions() {
-        return this.transactionsService.getTransactions();
+    getAll() {
+        return this.transactionsService.getAll();
+    }
+    getMonthlySummary() {
+        return this.transactionsService.getMonthlySummary();
+    }
+    getWeeklyRevenue() {
+        return this.transactionsService.getWeeklyRevenue();
     }
 };
 exports.TransactionsController = TransactionsController;
@@ -25,8 +31,20 @@ __decorate([
     (0, common_1.Get)(),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
-    __metadata("design:returntype", Promise)
-], TransactionsController.prototype, "getTransactions", null);
+    __metadata("design:returntype", void 0)
+], TransactionsController.prototype, "getAll", null);
+__decorate([
+    (0, common_1.Get)('monthly'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], TransactionsController.prototype, "getMonthlySummary", null);
+__decorate([
+    (0, common_1.Get)('weekly-revenue'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], TransactionsController.prototype, "getWeeklyRevenue", null);
 exports.TransactionsController = TransactionsController = __decorate([
     (0, common_1.Controller)('transactions'),
     __metadata("design:paramtypes", [transactions_service_1.TransactionsService])

@@ -1,9 +1,72 @@
 import React, { useState } from 'react';
+import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
 import './Demandes.css';
 
-const Demandes = () => {
+const createPriceIcon = (price) => {
+  return L.divIcon({
+    className: 'custom-price-marker',
+    html: `<div class="price-marker-content">${price}€</div>`,
+    iconSize: [40, 30],
+    iconAnchor: [20, 15]
+  });
+};
+
+const Demandes = ({ filterQuery = '' }) => {
   const [view, setView] = useState('grid');
   const [mutualise, setMutualise] = useState(false);
+  const [mapInstance, setMapInstance] = useState(null);
+  const [searchQuery, setSearchQuery] = useState('');
+
+  const DEFAULT_CENTER = [43.6044, 2.2403];
+  const DEFAULT_ZOOM = 13;
+
+  const handleZoomIn = () => { if (mapInstance) mapInstance.zoomIn(); };
+  const handleZoomOut = () => { if (mapInstance) mapInstance.zoomOut(); };
+  const handleReset = () => { if (mapInstance) mapInstance.flyTo(DEFAULT_CENTER, DEFAULT_ZOOM); };
+  const handleGeolocate = () => {
+    if ('geolocation' in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          if (mapInstance) {
+            mapInstance.flyTo([position.coords.latitude, position.coords.longitude], 14);
+          }
+        },
+        () => {
+          alert("Impossible de récupérer votre position.");
+        }
+      );
+    } else {
+      alert("La géolocalisation n'est pas supportée par votre navigateur.");
+    }
+  };
+
+  const mapControls = [
+    { icon: '⊕', action: handleZoomIn, title: 'Zoom avant' },
+    { icon: '⊖', action: handleZoomOut, title: 'Zoom arrière' },
+    { icon: '◎', action: handleGeolocate, title: 'Ma position' },
+    { icon: '⟲', action: handleReset, title: 'Réinitialiser la vue' }
+  ];
+
+  const handleSearch = async (e) => {
+    e.preventDefault();
+    if (!searchQuery.trim() || !mapInstance) return;
+
+    try {
+      const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&limit=1&q=${encodeURIComponent(searchQuery)}`);
+      const data = await response.json();
+      if (data && data.length > 0) {
+        const { lat, lon } = data[0];
+        mapInstance.flyTo([parseFloat(lat), parseFloat(lon)], 13);
+      } else {
+        alert("Lieu introuvable. Veuillez essayer avec une autre orthographe ou préciser le code postal.");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Erreur réseau lors de la recherche du lieu.");
+    }
+  };
 
   const demandes = [
     {
@@ -52,20 +115,20 @@ const Demandes = () => {
   ];
 
   const priceMarkers = [
-    { price: 36, left: '15%', top: '25%' },
-    { price: 25, left: '25%', top: '35%' },
-    { price: 35, left: '30%', top: '40%' },
-    { price: 54, left: '45%', top: '35%' },
-    { price: 42, left: '35%', top: '50%' },
-    { price: 43, left: '40%', top: '60%' },
-    { price: 51, left: '50%', top: '55%' },
-    { price: 22, left: '60%', top: '50%' },
-    { price: 23, left: '55%', top: '65%' },
-    { price: 34, left: '65%', top: '65%' },
-    { price: 35, left: '70%', top: '55%' },
-    { price: 50, left: '80%', top: '70%' },
-    { price: 45, left: '75%', top: '80%' },
-    { price: 43, left: '85%', top: '80%' }
+    { id: 1, price: 36, position: [43.605, 2.240] },
+    { id: 2, price: 25, position: [43.610, 2.245] },
+    { id: 3, price: 35, position: [43.602, 2.235] },
+    { id: 4, price: 54, position: [43.615, 2.250] },
+    { id: 5, price: 42, position: [43.595, 2.230] },
+    { id: 6, price: 43, position: [43.608, 2.242] },
+    { id: 7, price: 51, position: [43.601, 2.248] },
+    { id: 8, price: 22, position: [43.590, 2.220] },
+    { id: 9, price: 23, position: [43.612, 2.238] },
+    { id: 10, price: 34, position: [43.606, 2.246] },
+    { id: 11, price: 35, position: [43.598, 2.234] },
+    { id: 12, price: 50, position: [43.620, 2.255] },
+    { id: 13, price: 45, position: [43.592, 2.228] },
+    { id: 14, price: 43, position: [43.618, 2.240] }
   ];
 
   return (
@@ -80,17 +143,17 @@ const Demandes = () => {
           <div className="demandes-controls-bar">
             <div className="controls-left-group">
               <span className="demandes-info">23 résultats • Juin 14 - 30</span>
-              
+
               <button className="btn-plus">⊕ Plus</button>
 
               <div className="view-toggle-group">
-                <button 
+                <button
                   className={`view-btn ${view === 'grid' ? 'active' : ''}`}
                   onClick={() => setView('grid')}
                 >
                   ⊞
                 </button>
-                <button 
+                <button
                   className={`view-btn ${view === 'list' ? 'active' : ''}`}
                   onClick={() => setView('list')}
                 >
@@ -103,8 +166,8 @@ const Demandes = () => {
               <div className="mutualise-toggle">
                 <span>Mutualisé</span>
                 <label className="toggle-switch">
-                  <input 
-                    type="checkbox" 
+                  <input
+                    type="checkbox"
                     checked={mutualise}
                     onChange={() => setMutualise(!mutualise)}
                   />
@@ -120,34 +183,40 @@ const Demandes = () => {
 
           {/* Demandes Cards */}
           <div className="demandes-list">
-            {demandes.map(demande => (
-              <div key={demande.id} className="demande-card">
-                <div className="demande-header-row">
-                  <div>
-                    <h3>{demande.name}</h3>
-                    <span className="demande-date">{demande.date} • {demande.time}</span>
+            {demandes
+              .filter(d =>
+                (d.name && d.name.toLowerCase().includes(filterQuery.toLowerCase())) ||
+                (d.from && d.from.toLowerCase().includes(filterQuery.toLowerCase())) ||
+                (d.to && d.to.toLowerCase().includes(filterQuery.toLowerCase()))
+              )
+              .map(demande => (
+                <div key={demande.id} className="demande-card">
+                  <div className="demande-header-row">
+                    <div>
+                      <h3>{demande.name}</h3>
+                      <span className="demande-date">{demande.date} • {demande.time}</span>
+                    </div>
+                    <div className="demande-price">{demande.price}€</div>
                   </div>
-                  <div className="demande-price">{demande.price}€</div>
-                </div>
 
-                <div className="demande-route">
-                  <span className="route-icon">📍</span>
-                  <div className="route-details">
-                    <div className="route-text">{demande.from} &gt; {demande.to}</div>
-                    <div className="route-meta">
-                      {demande.type}• {demande.direction}• {demande.distance}• {demande.duration}
-                      {demande.status && `• ${demande.status}`}
-                      {demande.wait && `• ${demande.wait}`}
+                  <div className="demande-route">
+                    <span className="route-icon">📍</span>
+                    <div className="route-details">
+                      <div className="route-text">{demande.from} &gt; {demande.to}</div>
+                      <div className="route-meta">
+                        {demande.type}• {demande.direction}• {demande.distance}• {demande.duration}
+                        {demande.status && `• ${demande.status}`}
+                        {demande.wait && `• ${demande.wait}`}
+                      </div>
                     </div>
                   </div>
-                </div>
 
-                <div className="demande-actions">
-                  <button className="btn-accepter">🚗 Accepter</button>
-                  <button className="btn-refuser">✕ Refuser</button>
+                  <div className="demande-actions">
+                    <button className="btn-accepter">🚗 Accepter</button>
+                    <button className="btn-refuser">✕ Refuser</button>
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
           </div>
 
           {/* Pagination */}
@@ -165,27 +234,57 @@ const Demandes = () => {
         </div>
 
         {/* Right Column - Map */}
-        <div >
+        <div className="demandes-map-section">
           <div className="map-container">
-            <div className="map-search">
-              <button className="map-search-btn">🔍 Rechercher sur la carte</button>
+            <div className="map-search" style={{ position: 'absolute', top: '16px', left: '50%', transform: 'translateX(-50%)', zIndex: 1000 }}>
+              <form className="map-search-form" onSubmit={handleSearch}>
+                <input
+                  type="text"
+                  className="map-search-input"
+                  placeholder="Rechercher une ville, une adresse..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
+                <button type="submit" className="map-search-btn-icon">🔍</button>
+              </form>
             </div>
 
             <div className="map-controls">
-              {['⊕', '⊖', '◎', '⟲'].map((icon, i) => (
-                <button key={i} className="map-control-btn">{icon}</button>
+              {mapControls.map((control, i) => (
+                <button
+                  key={i}
+                  className="map-control-btn"
+                  onClick={control.action}
+                  title={control.title}
+                >
+                  {control.icon}
+                </button>
               ))}
             </div>
 
-            {priceMarkers.map((marker, index) => (
-              <div 
-                key={index}
-                className="price-marker"
-                style={{ left: marker.left, top: marker.top }}
-              >
-                {marker.price}€
-              </div>
-            ))}
+            <MapContainer
+              center={DEFAULT_CENTER}
+              zoom={DEFAULT_ZOOM}
+              style={{ height: '100%', width: '100%', zIndex: 1 }}
+              zoomControl={false}
+              ref={setMapInstance}
+            >
+              <TileLayer
+                attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
+              />
+              {priceMarkers.map(marker => (
+                <Marker
+                  key={marker.id}
+                  position={marker.position}
+                  icon={createPriceIcon(marker.price)}
+                >
+                  <Popup>
+                    Trajet potentiel : <strong>{marker.price}€</strong>
+                  </Popup>
+                </Marker>
+              ))}
+            </MapContainer>
           </div>
         </div>
       </div>

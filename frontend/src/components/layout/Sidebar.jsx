@@ -2,7 +2,7 @@ import React from 'react';
 import './Sidebar.css';
 
 
-const Sidebar = ({ currentPage, setCurrentPage }) => {
+const Sidebar = ({ currentPage, setCurrentPage, onLogout, user }) => {
   const menuItems = [
     { id: 'dashboard', icon: '📊', label: 'Tableau de bord' },
     { id: 'transactions', icon: '💳', label: 'Transactions' },
@@ -17,29 +17,25 @@ const Sidebar = ({ currentPage, setCurrentPage }) => {
       <div className="sidebar-header">
         <div className="logo">
           <img
-  src="/images/carewaylg.jpg"
-  alt="CareWay Logo"
- 
-  style={{ width: '120px' }}
-/>
-
-
-         
+            src="/images/carewaylg.jpg"
+            alt="CareWay Logo"
+            style={{ width: '120px' }}
+          />
         </div>
       </div>
-      
+
       <div className="user-profile">
-        <div className="user-avatar">👤</div>
+        <div className="user-avatar">{user?.firstName?.[0] || '👤'}</div>
         <div className="user-info">
-          <div className="user-name">Pierre Michel</div>
-          <div className="user-role">Transporteur coordinateur</div>
+          <div className="user-name">{user ? `${user.firstName} ${user.lastName}` : 'Utilisateur'}</div>
+          <div className="user-role">{user?.role || 'Transporteur'}</div>
         </div>
       </div>
 
       <nav className="sidebar-nav">
         {menuItems.map((item) => (
-          <div 
-            key={item.id} 
+          <div
+            key={item.id}
             className={`nav-item ${currentPage === item.id ? 'active' : ''}`}
             onClick={() => setCurrentPage(item.id)}
           >
@@ -50,14 +46,26 @@ const Sidebar = ({ currentPage, setCurrentPage }) => {
       </nav>
 
       <div className="sidebar-footer">
-        <div 
+        <div
           className={`profile-section ${currentPage === 'profil' ? 'active' : ''}`}
           onClick={() => setCurrentPage('profil')}
         >
           <span className="profile-icon">👤</span>
           <span>Profil</span>
         </div>
-        
+
+        <div
+          className="logout-section"
+          onClick={onLogout}
+          style={{ display: 'flex', alignItems: 'center', gap: '12px', padding: '12px 16px', color: '#ef4444', cursor: 'pointer', fontWeight: '500', marginTop: '8px', borderRadius: '8px', transition: 'background-color 0.2s' }}
+          onMouseOver={(e) => e.currentTarget.style.backgroundColor = '#fee2e2'}
+          onMouseOut={(e) => e.currentTarget.style.backgroundColor = 'transparent'}
+        >
+          <span className="logout-icon" style={{ fontSize: '20px' }}>🚪</span>
+          <span>Se déconnecter</span>
+        </div>
+
+
         <div className="trip-info">
           <div className="trip-badge">
             <span className="trip-date">31</span>

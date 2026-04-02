@@ -136,11 +136,11 @@
   transition: 0.3s;
 }
 
-.toggle-switch input:checked + .toggle-slider {
+.toggle-switch input:checked+.toggle-slider {
   background: #4169E1;
 }
 
-.toggle-switch input:checked + .toggle-slider::before {
+.toggle-switch input:checked+.toggle-slider::before {
   transform: translateX(20px);
 }
 
@@ -308,14 +308,46 @@
   z-index: 10;
 }
 
-.map-search-btn {
+.map-search-form {
+  display: flex;
+  align-items: center;
   background: white;
-  border: none;
   border-radius: 24px;
-  padding: 10px 20px;
-  font-size: 13px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  padding: 4px;
+  width: 320px;
+}
+
+.map-search-input {
+  flex: 1;
+  border: none;
+  background: transparent;
+  padding: 8px 16px;
+  font-size: 14px;
+  color: #2c3e50;
+  outline: none;
+}
+
+.map-search-input::placeholder {
+  color: #a0aec0;
+}
+
+.map-search-btn-icon {
+  background: #4169E1;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  transition: background 0.2s;
+}
+
+.map-search-btn-icon:hover {
+  background: #3b82f6;
 }
 
 .map-controls {
@@ -335,23 +367,33 @@
   border: none;
   border-radius: 8px;
   cursor: pointer;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
 
-.price-marker {
-  position: absolute;
+/* Custom Leaflet Marker */
+.custom-price-marker {
+  background: transparent;
+  border: none;
+}
+
+.price-marker-content {
+  position: relative;
   background: #4169E1;
   color: white;
   padding: 6px 14px;
   border-radius: 20px;
   font-size: 13px;
   font-weight: 600;
-  box-shadow: 0 3px 10px rgba(65,105,225,0.4);
+  box-shadow: 0 3px 10px rgba(65, 105, 225, 0.4);
   cursor: pointer;
-  transform: translate(-50%, -100%);
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s, background-color 0.2s;
 }
 
-.price-marker::after {
+.price-marker-content::after {
   content: '';
   position: absolute;
   bottom: -6px;
@@ -360,12 +402,28 @@
   border-left: 6px solid transparent;
   border-right: 6px solid transparent;
   border-top: 6px solid #4169E1;
+  transition: border-top-color 0.2s;
+}
+
+.price-marker-content:hover {
+  transform: scale(1.1);
+  background-color: #3b82f6;
+}
+
+.price-marker-content:hover::after {
+  border-top-color: #3b82f6;
+}
+
+.leaflet-container {
+  font-family: inherit;
+  border-radius: 12px;
 }
 
 @media (max-width: 1200px) {
   .demandes-main-content {
     grid-template-columns: 1fr;
   }
+
   .map-container {
     height: 500px;
   }

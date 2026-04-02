@@ -1,31 +1,84 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './Profil.css';
 import { FiCamera } from 'react-icons/fi';
 
-const Profil = () => {
+const Profil = ({ user, onUpdateUser }) => {
   const [activeTab, setActiveTab] = useState('Modifier le profil');
   const [isEditing, setIsEditing] = useState(false);
-  const [userData, setUserData] = useState({
-    fullName: 'Pierre Michel',
-    email: 'pierremichel@gmail.com',
-    birthDate: '25 Janvier 1990',
-    password: '**********',
-    address: '6 rue Firmin Oulès',
-    postalCode: '81100',
-    city: 'Castres',
-    country: 'France'
-  });
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
 
-  const [editData, setEditData] = useState({ ...userData });
+  const [userData, setUserData] = useState(null);
+  const [editData, setEditData] = useState(null);
+
+  useEffect(() => {
+    if (user?.id) {
+      fetchProfile();
+    }
+  }, [user]);
+
+  const fetchProfile = async () => {
+    try {
+      setLoading(true);
+      const res = await fetch(`http://localhost:3001/api/users/profile/${user.id}`);
+      if (!res.ok) throw new Error('Erreur lors du chargement du profil');
+      const data = await res.json();
+      setUserData(data);
+      setEditData({ ...data, password: '' });
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const tabs = ['Modifier le profil', 'Préférences', 'Sécurité'];
 
-  const handleEdit = () => setIsEditing(true);
-  const handleCancel = () => setIsEditing(false);
-  const handleSave = () => {
-    setUserData({ ...editData });
+  const handleEdit = () => {
+    setSuccess('');
+    setError('');
+    setIsEditing(true);
+  };
+
+  const handleCancel = () => {
+    setEditData({ ...userData, password: '' });
     setIsEditing(false);
-    alert('Modifications enregistrées avec succès!');
+  };
+
+  const handleSave = async () => {
+    setError('');
+    setSuccess('');
+
+    try {
+      const dataToSave = { ...editData };
+      if (!dataToSave.password) {
+        delete dataToSave.password;
+      }
+
+      const res = await fetch(`http://localhost:3001/api/users/profile/${user.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(dataToSave)
+      });
+
+      if (!res.ok) throw new Error('Erreur lors de la sauvegarde');
+
+      const updatedUser = await res.json();
+      setUserData(updatedUser);
+      setEditData({ ...updatedUser, password: '' });
+      setIsEditing(false);
+      setSuccess('Modifications enregistrées avec succès!');
+
+      if (onUpdateUser) {
+        onUpdateUser(updatedUser);
+        localStorage.setItem('careway_user', JSON.stringify(updatedUser));
+      }
+
+      setTimeout(() => setSuccess(''), 3000);
+    } catch (err) {
+      setError(err.message);
+    }
   };
 
   const handleInputChange = (field, value) => {
@@ -33,27 +86,30 @@ const Profil = () => {
   };
 
   const handleChangePhoto = () => {
-    console.log('Changer la photo');
     alert('Fonction de changement de photo non implémentée.');
   };
 
   const fields = [
-    { label: 'Prénom et Nom', field: 'fullName' },
+    { label: 'Prénom', field: 'firstName' },
+    { label: 'Nom', field: 'lastName' },
     { label: 'Email', field: 'email' },
-    { label: 'Date de naissance', field: 'birthDate' },
-    { label: 'Mot de passe', field: 'password', type: 'password' },
+    { label: 'Date de naissance', field: 'birthDate', placeholder: 'ex: 25 Janvier 1990' },
+    { label: 'Mot de passe', field: 'password', type: 'password', placeholder: 'Nouveau mot de passe (laisser vide si inchangé)' },
     { label: 'Adresse', field: 'address' },
     { label: 'Code Postal', field: 'postalCode' },
     { label: 'Ville', field: 'city' },
     { label: 'Pays', field: 'country' }
   ];
 
+  if (loading || !userData) {
+    return <div className="profil-container"><div className="profil-card">Chargement de votre profil...</div></div>;
+  }
+
   return (
     <div className="profil-container">
       <div className={`profil-card ${isEditing ? 'editing' : 'not-editing'}`}>
-        {/* Header */}
         <div className="profil-header">
-          <div className="profil-title">Modifier le profil</div>
+          <div className="profil-title">Mon profil</div>
           <div className="profil-tabs">
             {tabs.map((tab, i) => (
               <button
@@ -67,52 +123,51 @@ const Profil = () => {
           </div>
         </div>
 
-        {/* Contenu de l'onglet Modifier le profil */}
+        {error && <div style={{ color: 'red', padding: '10px', textAlign: 'center', backgroundColor: '#fee2e2', borderRadius: '4px', margin: '10px' }}>{error}</div>}
+        {success && <div style={{ color: 'green', padding: '10px', textAlign: 'center', backgroundColor: '#d1fae5', borderRadius: '4px', margin: '10px' }}>{success}</div>}
+
         {activeTab === 'Modifier le profil' && (
           <div className="profil-content">
-            {/* Avatar + info */}
             <div className="avatar-section">
               <div className="avatar-container">
                 <div className="avatar-circle">
-                  {userData.fullName
-                    .split(' ')
-                    .map(n => n[0])
-                    .join('')}
+                  {userData.firstName?.[0]}{userData.lastName?.[0]}
                 </div>
                 <div className="change-avatar-icon" onClick={handleChangePhoto}>
                   <FiCamera size={16} />
                 </div>
               </div>
               <div className="avatar-info">
-                <div className="avatar-name">{userData.fullName}</div>
+                <div className="avatar-name">{userData.firstName} {userData.lastName}</div>
                 <div className="avatar-details">
-                  <span className="avatar-role">Transporteur coordinateur</span>
+                  <span className="avatar-role">{userData.role || 'Transporteur coordinateur'}</span>
                   <span className="avatar-email">{userData.email}</span>
                 </div>
               </div>
             </div>
 
-            {/* Formulaire */}
             <div className="form-section">
               {fields.map((item, i) => (
                 <div key={i} className="form-row">
                   <div className="form-label">{item.label}</div>
-                  <div className="form-value">
-                    {item.type === 'password'
-                      ? '•'.repeat(10)
-                      : userData[item.field]}
-                  </div>
-                  <input
-                    type={item.type || 'text'}
-                    className="form-input"
-                    value={editData[item.field]}
-                    onChange={e => handleInputChange(item.field, e.target.value)}
-                    disabled={!isEditing}
-                  />
+                  {!isEditing ? (
+                    <div className="form-value">
+                      {item.type === 'password'
+                        ? '••••••••'
+                        : userData[item.field] || '-'}
+                    </div>
+                  ) : (
+                    <input
+                      type={item.type || 'text'}
+                      className="form-input"
+                      value={editData[item.field] || ''}
+                      onChange={e => handleInputChange(item.field, e.target.value)}
+                      placeholder={item.placeholder || ''}
+                    />
+                  )}
                 </div>
               ))}
 
-              {/* Actions */}
               <div className="form-actions">
                 {!isEditing ? (
                   <button className="save-button" onClick={handleEdit}>
@@ -133,7 +188,6 @@ const Profil = () => {
           </div>
         )}
 
-        {/* Contenu des autres onglets */}
         {activeTab === 'Préférences' && (
           <div className="profil-content">Contenu des préférences</div>
         )}

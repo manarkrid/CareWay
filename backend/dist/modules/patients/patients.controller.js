@@ -16,8 +16,11 @@ let PatientsController = class PatientsController {
     constructor(patientsService) {
         this.patientsService = patientsService;
     }
-    async getPatients() {
-        return this.patientsService.getPatients();
+    getAll() {
+        return this.patientsService.getAll();
+    }
+    getStats() {
+        return this.patientsService.getStats();
     }
 };
 exports.PatientsController = PatientsController;
@@ -25,8 +28,14 @@ __decorate([
     (0, common_1.Get)(),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
-    __metadata("design:returntype", Promise)
-], PatientsController.prototype, "getPatients", null);
+    __metadata("design:returntype", void 0)
+], PatientsController.prototype, "getAll", null);
+__decorate([
+    (0, common_1.Get)('stats'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], PatientsController.prototype, "getStats", null);
 exports.PatientsController = PatientsController = __decorate([
     (0, common_1.Controller)('patients'),
     __metadata("design:paramtypes", [patients_service_1.PatientsService])

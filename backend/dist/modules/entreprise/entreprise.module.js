@@ -15,7 +15,6 @@ let EntrepriseModule = class EntrepriseModule {
 exports.EntrepriseModule = EntrepriseModule;
 exports.EntrepriseModule = EntrepriseModule = __decorate([
     (0, common_1.Module)({
-        imports: [],
         controllers: [entreprise_controller_1.EntrepriseController],
         providers: [entreprise_service_1.EntrepriseService],
         exports: [entreprise_service_1.EntrepriseService],

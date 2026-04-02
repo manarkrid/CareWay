@@ -1,98 +1,66 @@
 import { Injectable } from '@nestjs/common';
-// import { InjectRepository } from '@nestjs/typeorm';
-// import { Repository } from 'typeorm';
-// import { Employee } from './entities/employee.entity';
-// import { Vehicle } from './entities/vehicle.entity';
-// import { Contract } from './entities/contract.entity';
 
 @Injectable()
 export class EntrepriseService {
-  // constructor(
-  //   @InjectRepository(Employee)
-  //   private employeeRepository: Repository<Employee>,
-  //   @InjectRepository(Vehicle)
-  //   private vehicleRepository: Repository<Vehicle>,
-  //   @InjectRepository(Contract)
-  //   private contractRepository: Repository<Contract>,
-  // ) {}
-
-  async getEmployees() {
-    // return this.employeeRepository.find();
+  getEquipe() {
     return [
-      {
-        id: 1,
-        firstName: 'Loic',
-        lastName: 'Dupont',
-        role: 'Ambulancier',
-        activityRate: 90,
-        absenceDays: 2,
-        status: 'Disponible'
-      },
-      {
-        id: 2,
-        firstName: 'Pierre',
-        lastName: 'Bois',
-        role: 'Chauffeur',
-        activityRate: 95,
-        absenceDays: 1,
-        status: 'En trajet'
-      }
+      { nom: 'Loic Dupont', emplacement: 'Castres', absence: 2, activite: 90, statut: 'Disponible' },
+      { nom: 'Pierre Bois', emplacement: 'Toulouse', absence: 1, activite: 95, statut: 'En trajet' },
+      { nom: 'Jose Gomez', emplacement: 'Castres', absence: 4, activite: 88, statut: 'Disponible' },
+      { nom: 'Marie Lefèvre', emplacement: 'Castres', absence: 0, activite: 98, statut: 'En trajet' },
+      { nom: 'Jean Petit', emplacement: 'Albi', absence: 3, activite: 82, statut: 'Congés' },
     ];
   }
 
-  async getVehicles() {
-    // return this.vehicleRepository.find();
+  getVehicules() {
     return [
-      {
-        id: 1,
-        registration: 'AB-133-BC',
-        type: 'Ambulance',
-        mileage: 45000,
-        nextMaintenance: '2025-08-26',
-        status: 'Disponible'
-      },
-      {
-        id: 2,
-        registration: 'ZV-887-FV',
-        type: 'VSL',
-        mileage: 120050,
-        nextMaintenance: '2027-02-18',
-        status: 'Disponible'
-      }
+      { id: 'V-001', immatriculation: 'AB-123-CD', type: 'VSL', marque: 'Renault Trafic', statut: 'Disponible', km: 45230 },
+      { id: 'V-002', immatriculation: 'EF-456-GH', type: 'VSL', marque: 'Peugeot Expert', statut: 'En service', km: 72450 },
+      { id: 'V-003', immatriculation: 'IJ-789-KL', type: 'Ambulance', marque: 'Mercedes Sprinter', statut: 'Maintenance', km: 98120 },
+      { id: 'V-004', immatriculation: 'MN-012-OP', type: 'TAXI', marque: 'Toyota Prius', statut: 'Disponible', km: 32100 },
     ];
   }
 
-  async getContracts() {
-    // return this.contractRepository.find();
+  getTrajets() {
     return [
-      {
-        id: 1,
-        partnerName: 'CPAM Tarn',
-        type: 'Public',
-        status: 'En cours'
-      },
-      {
-        id: 2,
-        partnerName: 'Ct. du Sidobre',
-        type: 'Privé',
-        status: 'En cours'
-      }
+      { id: '#TR-2038', date: '31/07/2025', conducteur: 'Loic Dupont', patient: 'L. Martin', distance: '18km', statut: 'Terminé' },
+      { id: '#TR-2037', date: '31/07/2025', conducteur: 'Pierre Bois', patient: 'J. Roux', distance: '12km', statut: 'Terminé' },
+      { id: '#TR-2036', date: '30/07/2025', conducteur: 'Jose Gomez', patient: 'H. Bernard', distance: '25km', statut: 'En cours' },
+      { id: '#TR-2035', date: '30/07/2025', conducteur: 'Marie Lefèvre', patient: 'E. Dupont', distance: '20km', statut: 'Planifié' },
     ];
   }
 
-  async getStats() {
-    // const employeeCount = await this.employeeRepository.count();
-    // const vehicleCount = await this.vehicleRepository.count();
-    // const contractCount = await this.contractRepository.count();
+  getContrats() {
+    return [
+      { id: 'C-001', organisme: 'CPAM du Tarn', type: 'Convention', dateDebut: '01/01/2025', dateFin: '31/12/2025', statut: 'Actif' },
+      { id: 'C-002', organisme: 'MSA Midi-Pyrénées', type: 'Convention', dateDebut: '01/03/2025', dateFin: '28/02/2026', statut: 'Actif' },
+      { id: 'C-003', organisme: 'Mutuelle Nationale', type: 'Contrat', dateDebut: '01/06/2025', dateFin: '31/05/2026', statut: 'Actif' },
+    ];
+  }
 
+  getHistorique() {
     return {
-      employees: 2,
-      vehicles: 2,
-      contracts: 2,
-      totalTrips: 3359,
-      delays: 3,
-      cancellations: 12,
-      incidents: 1,
+      chartData: [
+        { month: 'Jan', value: 45 },
+        { month: 'Fév', value: 52 },
+        { month: 'Mar', value: 58 },
+        { month: 'Avr', value: 55 },
+        { month: 'Mai', value: 42 },
+        { month: 'Jun', value: 48 },
+        { month: 'Jul', value: 77 },
+      ],
+      totalTrajets: 3342,
+      totalRevenu: '115 420€',
+      tauxSatisfaction: '94%',
     };
+  }
+
+  getNotifications() {
+    return [
+      { id: 1, type: 'alerte', message: 'Maintenance véhicule V-003 prévue dans 3 jours', date: '04/03/2026', priorite: 'haute' },
+      { id: 2, type: 'info', message: 'Nouveau contrat CPAM enregistré avec succès', date: '03/03/2026', priorite: 'normale' },
+      { id: 3, type: 'alerte', message: 'Jean Petit en congés du 05/03 au 12/03', date: '02/03/2026', priorite: 'normale' },
+      { id: 4, type: 'info', message: '8 télétransmissions en attente de validation', date: '01/03/2026', priorite: 'haute' },
+    ];
   }
 }

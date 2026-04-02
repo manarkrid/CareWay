@@ -3,10 +3,17 @@ import { PatientsService } from './patients.service';
 
 @Controller('patients')
 export class PatientsController {
-  constructor(private readonly patientsService: PatientsService) {}
+  constructor(private readonly patientsService: PatientsService) { }
 
+  // GET /api/patients
   @Get()
-  async getPatients() {
-    return this.patientsService.getPatients();
+  getAll() {
+    return this.patientsService.getAll();
+  }
+
+  // GET /api/patients/stats
+  @Get('stats')
+  getStats() {
+    return this.patientsService.getStats();
   }
 }

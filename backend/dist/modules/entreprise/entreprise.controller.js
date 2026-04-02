@@ -16,44 +16,62 @@ let EntrepriseController = class EntrepriseController {
     constructor(entrepriseService) {
         this.entrepriseService = entrepriseService;
     }
-    async getEmployees() {
-        return this.entrepriseService.getEmployees();
+    getEquipe() {
+        return this.entrepriseService.getEquipe();
     }
-    async getVehicles() {
-        return this.entrepriseService.getVehicles();
+    getVehicules() {
+        return this.entrepriseService.getVehicules();
     }
-    async getContracts() {
-        return this.entrepriseService.getContracts();
+    getTrajets() {
+        return this.entrepriseService.getTrajets();
     }
-    async getStats() {
-        return this.entrepriseService.getStats();
+    getContrats() {
+        return this.entrepriseService.getContrats();
+    }
+    getHistorique() {
+        return this.entrepriseService.getHistorique();
+    }
+    getNotifications() {
+        return this.entrepriseService.getNotifications();
     }
 };
 exports.EntrepriseController = EntrepriseController;
 __decorate([
-    (0, common_1.Get)('employees'),
+    (0, common_1.Get)('equipe'),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
-    __metadata("design:returntype", Promise)
-], EntrepriseController.prototype, "getEmployees", null);
+    __metadata("design:returntype", void 0)
+], EntrepriseController.prototype, "getEquipe", null);
 __decorate([
-    (0, common_1.Get)('vehicles'),
+    (0, common_1.Get)('vehicules'),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
-    __metadata("design:returntype", Promise)
-], EntrepriseController.prototype, "getVehicles", null);
+    __metadata("design:returntype", void 0)
+], EntrepriseController.prototype, "getVehicules", null);
 __decorate([
-    (0, common_1.Get)('contracts'),
+    (0, common_1.Get)('trajets'),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
-    __metadata("design:returntype", Promise)
-], EntrepriseController.prototype, "getContracts", null);
+    __metadata("design:returntype", void 0)
+], EntrepriseController.prototype, "getTrajets", null);
 __decorate([
-    (0, common_1.Get)('stats'),
+    (0, common_1.Get)('contrats'),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
-    __metadata("design:returntype", Promise)
-], EntrepriseController.prototype, "getStats", null);
+    __metadata("design:returntype", void 0)
+], EntrepriseController.prototype, "getContrats", null);
+__decorate([
+    (0, common_1.Get)('historique'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], EntrepriseController.prototype, "getHistorique", null);
+__decorate([
+    (0, common_1.Get)('notifications'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], EntrepriseController.prototype, "getNotifications", null);
 exports.EntrepriseController = EntrepriseController = __decorate([
     (0, common_1.Controller)('entreprise'),
     __metadata("design:paramtypes", [entreprise_service_1.EntrepriseService])

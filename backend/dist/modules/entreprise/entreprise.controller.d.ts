@@ -2,36 +2,51 @@ import { EntrepriseService } from './entreprise.service';
 export declare class EntrepriseController {
     private readonly entrepriseService;
     constructor(entrepriseService: EntrepriseService);
-    getEmployees(): Promise<{
-        id: number;
-        firstName: string;
-        lastName: string;
-        role: string;
-        activityRate: number;
-        absenceDays: number;
-        status: string;
-    }[]>;
-    getVehicles(): Promise<{
-        id: number;
-        registration: string;
+    getEquipe(): {
+        nom: string;
+        emplacement: string;
+        absence: number;
+        activite: number;
+        statut: string;
+    }[];
+    getVehicules(): {
+        id: string;
+        immatriculation: string;
         type: string;
-        mileage: number;
-        nextMaintenance: string;
-        status: string;
-    }[]>;
-    getContracts(): Promise<{
-        id: number;
-        partnerName: string;
+        marque: string;
+        statut: string;
+        km: number;
+    }[];
+    getTrajets(): {
+        id: string;
+        date: string;
+        conducteur: string;
+        patient: string;
+        distance: string;
+        statut: string;
+    }[];
+    getContrats(): {
+        id: string;
+        organisme: string;
         type: string;
-        status: string;
-    }[]>;
-    getStats(): Promise<{
-        employees: number;
-        vehicles: number;
-        contracts: number;
-        totalTrips: number;
-        delays: number;
-        cancellations: number;
-        incidents: number;
-    }>;
+        dateDebut: string;
+        dateFin: string;
+        statut: string;
+    }[];
+    getHistorique(): {
+        chartData: {
+            month: string;
+            value: number;
+        }[];
+        totalTrajets: number;
+        totalRevenu: string;
+        tauxSatisfaction: string;
+    };
+    getNotifications(): {
+        id: number;
+        type: string;
+        message: string;
+        date: string;
+        priorite: string;
+    }[];
 }

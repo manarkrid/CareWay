@@ -22,8 +22,8 @@ const Calendrier = () => {
 
   // Données du planning
   const joursSemaine = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'];
-  const timeSlots = ['08:00','09:00','10:00','11:00','12:00','13:00','14:00','15:00','16:00','17:00'];
-  
+  const timeSlots = ['08:00', '09:00', '10:00', '11:00', '12:00', '13:00', '14:00', '15:00', '16:00', '17:00'];
+
   const planningData = {
     'Lundi': ['Loïc', 'Paul'],
     'Mardi': ['Jose', 'Jean'],
@@ -35,16 +35,18 @@ const Calendrier = () => {
   };
 
   // Données pour aujourd'hui
-  const trajetsAujourdhui = [
-    { id: 1, heure: '08:30', client: 'Hôpital Central', personne: 'Loïc', statut: 'En cours' },
-    { id: 2, heure: '10:15', client: 'Clinique Nord', personne: 'Marie', statut: 'À venir' },
-    { id: 3, heure: '14:00', client: 'Centre Médical', personne: 'Paul', statut: 'À venir' },
-    { id: 4, heure: '16:45', client: 'Résidence Soleil', personne: 'Jean', statut: 'Planifié' }
-  ];
+  const [trajetsAujourdhui, setTrajetsAujourdhui] = useState([]);
+
+  React.useEffect(() => {
+    fetch('http://localhost:3001/api/calendrier/today')
+      .then(res => res.json())
+      .then(data => setTrajetsAujourdhui(data))
+      .catch(err => console.error("Erreur serveur calendrier", err));
+  }, []);
 
   // Formatter la date
   const formatDate = (date) => {
-    return date.toLocaleDateString('fr-FR', { 
+    return date.toLocaleDateString('fr-FR', {
       weekday: 'long',
       day: 'numeric',
       month: 'long',
@@ -89,9 +91,19 @@ const Calendrier = () => {
     setCurrentDate(new Date());
   };
 
-  const handleSaveTrajet = (trajetData) => {
-    console.log('Trajet enregistré:', trajetData);
-    setShowModal(false);
+  const handleSaveTrajet = async (trajetData) => {
+    try {
+      const response = await fetch('http://localhost:3001/api/calendrier/trajet', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(trajetData)
+      });
+      const newTrajet = await response.json();
+      setTrajetsAujourdhui([...trajetsAujourdhui, newTrajet]);
+      setShowModal(false);
+    } catch (err) {
+      console.error("Erreur lors de l'ajout du trajet", err);
+    }
   };
 
   // Fonctions utilitaires pour les semaines
@@ -114,7 +126,7 @@ const Calendrier = () => {
   const getWeekDays = () => {
     const start = getStartOfWeek(currentDate);
     const days = [];
-    
+
     for (let i = 0; i < 7; i++) {
       const day = new Date(start);
       day.setDate(start.getDate() + i);
@@ -123,13 +135,13 @@ const Calendrier = () => {
         date: day
       });
     }
-    
+
     return days;
   };
 
   // Rendu du contenu selon l'onglet actif
   const renderContent = () => {
-    switch(activeTab) {
+    switch (activeTab) {
       case "Aujourd'hui":
         return (
           <div className="content-today">
@@ -182,7 +194,7 @@ const Calendrier = () => {
           <div className="content-person">
             <div className="person-filter-header">
               <h2>Équipe & Planning</h2>
-              <select 
+              <select
                 className="person-select-large"
                 value={selectedPerson}
                 onChange={(e) => setSelectedPerson(e.target.value)}
@@ -199,8 +211,8 @@ const Calendrier = () => {
               <div className="person-list">
                 <h3>Membres de l'équipe</h3>
                 {personnesList.map(person => (
-                  <div 
-                    key={person.id} 
+                  <div
+                    key={person.id}
                     className={`person-card ${selectedPerson === person.name || selectedPerson === 'Tous' ? 'selected' : ''}`}
                     onClick={() => setSelectedPerson(person.name)}
                   >
@@ -255,7 +267,7 @@ const Calendrier = () => {
 
       case "Semaine":
         const weekDays = getWeekDays();
-        
+
         return (
           <div className="content-week">
             <div className="week-header">
@@ -291,10 +303,10 @@ const Calendrier = () => {
                       <div key={`${day.name}-${time}`} className="day-cell">
                         {planningData[day.name] && timeIndex === 1 && (
                           planningData[day.name].map((person, index) => (
-                            <div 
-                              key={`${day.name}-${person}-${index}`} 
+                            <div
+                              key={`${day.name}-${person}-${index}`}
                               className="person-item"
-                              style={{ 
+                              style={{
                                 backgroundColor: getPersonColor(person)
                               }}
                             >
@@ -324,7 +336,7 @@ const Calendrier = () => {
   const getPersonColor = (name) => {
     const colors = {
       'Loïc': '#e3f2fd',
-      'Paul': '#f3e5f5', 
+      'Paul': '#f3e5f5',
       'Jose': '#e8f5e9',
       'Jean': '#fff3e0',
       'Jase': '#fce4ec'
@@ -348,7 +360,7 @@ const Calendrier = () => {
           ))}
         </div>
 
-        <button 
+        <button
           className="add-trajet-btn"
           onClick={() => setShowModal(true)}
         >
@@ -362,7 +374,7 @@ const Calendrier = () => {
       </div>
 
       {/* Modale Ajouter Trajet */}
-      <AjouterTrajet 
+      <AjouterTrajet
         isOpen={showModal}
         onClose={() => setShowModal(false)}
         onSave={handleSaveTrajet}

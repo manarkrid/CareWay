@@ -1,27 +1,43 @@
-import { Controller, Get, Post, Body, Param, Put, Delete } from '@nestjs/common';
+import { Controller, Get } from '@nestjs/common';
 import { EntrepriseService } from './entreprise.service';
 
 @Controller('entreprise')
 export class EntrepriseController {
-  constructor(private readonly entrepriseService: EntrepriseService) {}
+  constructor(private readonly entrepriseService: EntrepriseService) { }
 
-  @Get('employees')
-  async getEmployees() {
-    return this.entrepriseService.getEmployees();
+  // GET /api/entreprise/equipe
+  @Get('equipe')
+  getEquipe() {
+    return this.entrepriseService.getEquipe();
   }
 
-  @Get('vehicles')
-  async getVehicles() {
-    return this.entrepriseService.getVehicles();
+  // GET /api/entreprise/vehicules
+  @Get('vehicules')
+  getVehicules() {
+    return this.entrepriseService.getVehicules();
   }
 
-  @Get('contracts')
-  async getContracts() {
-    return this.entrepriseService.getContracts();
+  // GET /api/entreprise/trajets
+  @Get('trajets')
+  getTrajets() {
+    return this.entrepriseService.getTrajets();
   }
 
-  @Get('stats')
-  async getStats() {
-    return this.entrepriseService.getStats();
+  // GET /api/entreprise/contrats
+  @Get('contrats')
+  getContrats() {
+    return this.entrepriseService.getContrats();
+  }
+
+  // GET /api/entreprise/historique
+  @Get('historique')
+  getHistorique() {
+    return this.entrepriseService.getHistorique();
+  }
+
+  // GET /api/entreprise/notifications
+  @Get('notifications')
+  getNotifications() {
+    return this.entrepriseService.getNotifications();
   }
 }

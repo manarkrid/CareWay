@@ -16,8 +16,11 @@ let DemandesController = class DemandesController {
     constructor(demandesService) {
         this.demandesService = demandesService;
     }
-    async getDemandes() {
-        return this.demandesService.getDemandes();
+    getAll() {
+        return this.demandesService.getAll();
+    }
+    getPriceMarkers() {
+        return this.demandesService.getPriceMarkers();
     }
 };
 exports.DemandesController = DemandesController;
@@ -25,8 +28,14 @@ __decorate([
     (0, common_1.Get)(),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
-    __metadata("design:returntype", Promise)
-], DemandesController.prototype, "getDemandes", null);
+    __metadata("design:returntype", void 0)
+], DemandesController.prototype, "getAll", null);
+__decorate([
+    (0, common_1.Get)('price-markers'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], DemandesController.prototype, "getPriceMarkers", null);
 exports.DemandesController = DemandesController = __decorate([
     (0, common_1.Controller)('demandes'),
     __metadata("design:paramtypes", [demandes_service_1.DemandesService])

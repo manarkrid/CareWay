@@ -17,6 +17,7 @@ exports.DemandesModule = DemandesModule = __decorate([
     (0, common_1.Module)({
         controllers: [demandes_controller_1.DemandesController],
         providers: [demandes_service_1.DemandesService],
+        exports: [demandes_service_1.DemandesService],
     })
 ], DemandesModule);
 //# sourceMappingURL=demandes.module.js.map

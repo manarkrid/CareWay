@@ -1,0 +1,17 @@
+import { Controller, Get, Patch } from '@nestjs/common';
+import { NotificationsService } from './notifications.service';
+
+@Controller('notifications')
+export class NotificationsController {
+    constructor(private readonly notificationsService: NotificationsService) { }
+
+    @Get()
+    getAll() {
+        return this.notificationsService.getAll();
+    }
+
+    @Patch('read-all')
+    markAllAsRead() {
+        return this.notificationsService.markAllAsRead();
+    }
+}

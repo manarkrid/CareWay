@@ -8,6 +8,9 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
+var __param = (this && this.__param) || function (paramIndex, decorator) {
+    return function (target, key) { decorator(target, key, paramIndex); }
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.UsersController = void 0;
 const common_1 = require("@nestjs/common");
@@ -16,17 +19,38 @@ let UsersController = class UsersController {
     constructor(usersService) {
         this.usersService = usersService;
     }
-    async getProfile() {
-        return this.usersService.getProfile();
+    async getProfile(id) {
+        return this.usersService.getProfile(id);
+    }
+    async getDefaultProfile() {
+        return this.usersService.getProfile(1);
+    }
+    async updateProfile(id, updateData) {
+        return this.usersService.updateProfile(id, updateData);
     }
 };
 exports.UsersController = UsersController;
+__decorate([
+    (0, common_1.Get)('profile/:id'),
+    __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number]),
+    __metadata("design:returntype", Promise)
+], UsersController.prototype, "getProfile", null);
 __decorate([
     (0, common_1.Get)('profile'),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
-], UsersController.prototype, "getProfile", null);
+], UsersController.prototype, "getDefaultProfile", null);
+__decorate([
+    (0, common_1.Patch)('profile/:id'),
+    __param(0, (0, common_1.Param)('id', common_1.ParseIntPipe)),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number, Object]),
+    __metadata("design:returntype", Promise)
+], UsersController.prototype, "updateProfile", null);
 exports.UsersController = UsersController = __decorate([
     (0, common_1.Controller)('users'),
     __metadata("design:paramtypes", [users_service_1.UsersService])

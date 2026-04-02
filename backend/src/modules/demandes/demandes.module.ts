@@ -5,5 +5,6 @@ import { DemandesService } from './demandes.service';
 @Module({
   controllers: [DemandesController],
   providers: [DemandesService],
+  exports: [DemandesService],
 })
-export class DemandesModule {}
+export class DemandesModule { }
