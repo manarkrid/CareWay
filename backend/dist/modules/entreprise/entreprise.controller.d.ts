@@ -3,12 +3,14 @@ export declare class EntrepriseController {
     private readonly entrepriseService;
     constructor(entrepriseService: EntrepriseService);
     getEquipe(): {
+        id: number;
         nom: string;
         emplacement: string;
         absence: number;
         activite: number;
         statut: string;
     }[];
+    addEmployee(employee: any): any;
     getVehicules(): {
         id: string;
         immatriculation: string;
@@ -17,14 +19,24 @@ export declare class EntrepriseController {
         statut: string;
         km: number;
     }[];
-    getTrajets(): {
+    getTrajets(month?: string): {
         id: string;
         date: string;
         conducteur: string;
         patient: string;
+        destination: string;
         distance: string;
         statut: string;
+        month: string;
     }[];
+    getNextTrip(): {
+        date: string;
+        label: string;
+        participant: string;
+        departure: string;
+        arrival: string;
+        details: string;
+    };
     getContrats(): {
         id: string;
         organisme: string;
@@ -41,6 +53,21 @@ export declare class EntrepriseController {
         totalTrajets: number;
         totalRevenu: string;
         tauxSatisfaction: string;
+        retards: number;
+        annulations: number;
+        incidents: number;
+    };
+    getNotificationSettings(): {
+        id: number;
+        label: string;
+        description: string;
+        enabled: boolean;
+    }[];
+    updateNotificationSetting(id: string, enabled: boolean): {
+        id: number;
+        label: string;
+        description: string;
+        enabled: boolean;
     };
     getNotifications(): {
         id: number;

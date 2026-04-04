@@ -22,17 +22,29 @@ let EntrepriseController = class EntrepriseController {
     getEquipe() {
         return this.entrepriseService.getEquipe();
     }
+    addEmployee(employee) {
+        return this.entrepriseService.addEmployee(employee);
+    }
     getVehicules() {
         return this.entrepriseService.getVehicules();
     }
-    getTrajets() {
-        return this.entrepriseService.getTrajets();
+    getTrajets(month) {
+        return this.entrepriseService.getTrajets(month);
+    }
+    getNextTrip() {
+        return this.entrepriseService.getNextTrip();
     }
     getContrats() {
         return this.entrepriseService.getContrats();
     }
     getHistorique() {
         return this.entrepriseService.getHistorique();
+    }
+    getNotificationSettings() {
+        return this.entrepriseService.getNotificationSettings();
+    }
+    updateNotificationSetting(id, enabled) {
+        return this.entrepriseService.updateNotificationSetting(parseInt(id), enabled);
     }
     getNotifications() {
         return this.entrepriseService.getNotifications();
@@ -58,6 +70,13 @@ __decorate([
     __metadata("design:returntype", void 0)
 ], EntrepriseController.prototype, "getEquipe", null);
 __decorate([
+    (0, common_1.Post)('equipe'),
+    __param(0, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", void 0)
+], EntrepriseController.prototype, "addEmployee", null);
+__decorate([
     (0, common_1.Get)('vehicules'),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
@@ -65,10 +84,17 @@ __decorate([
 ], EntrepriseController.prototype, "getVehicules", null);
 __decorate([
     (0, common_1.Get)('trajets'),
+    __param(0, (0, common_1.Query)('month')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String]),
+    __metadata("design:returntype", void 0)
+], EntrepriseController.prototype, "getTrajets", null);
+__decorate([
+    (0, common_1.Get)('trajets/next'),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", void 0)
-], EntrepriseController.prototype, "getTrajets", null);
+], EntrepriseController.prototype, "getNextTrip", null);
 __decorate([
     (0, common_1.Get)('contrats'),
     __metadata("design:type", Function),
@@ -81,6 +107,20 @@ __decorate([
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", void 0)
 ], EntrepriseController.prototype, "getHistorique", null);
+__decorate([
+    (0, common_1.Get)('notifications/settings'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], EntrepriseController.prototype, "getNotificationSettings", null);
+__decorate([
+    (0, common_1.Patch)('notifications/settings/:id'),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Body)('enabled')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, Boolean]),
+    __metadata("design:returntype", void 0)
+], EntrepriseController.prototype, "updateNotificationSetting", null);
 __decorate([
     (0, common_1.Get)('notifications'),
     __metadata("design:type", Function),

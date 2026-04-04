@@ -1,53 +1,68 @@
-import { Controller, Get, Param, Res } from '@nestjs/common';
+import { Controller, Get, Post, Patch, Param, Body, Query, Res } from '@nestjs/common';
 import { EntrepriseService } from './entreprise.service';
 
 @Controller('entreprise')
 export class EntrepriseController {
   constructor(private readonly entrepriseService: EntrepriseService) { }
 
-  // GET /api/entreprise/equipe
   @Get('equipe')
   getEquipe() {
     return this.entrepriseService.getEquipe();
   }
 
-  // GET /api/entreprise/vehicules
+  @Post('equipe')
+  addEmployee(@Body() employee: any) {
+    return this.entrepriseService.addEmployee(employee);
+  }
+
   @Get('vehicules')
   getVehicules() {
     return this.entrepriseService.getVehicules();
   }
 
-  // GET /api/entreprise/trajets
   @Get('trajets')
-  getTrajets() {
-    return this.entrepriseService.getTrajets();
+  getTrajets(@Query('month') month?: string) {
+    return this.entrepriseService.getTrajets(month);
   }
 
-  // GET /api/entreprise/contrats
+  @Get('trajets/next')
+  getNextTrip() {
+    return this.entrepriseService.getNextTrip();
+  }
+
   @Get('contrats')
   getContrats() {
     return this.entrepriseService.getContrats();
   }
 
-  // GET /api/entreprise/historique
   @Get('historique')
   getHistorique() {
     return this.entrepriseService.getHistorique();
   }
 
-  // GET /api/entreprise/notifications
+  @Get('notifications/settings')
+  getNotificationSettings() {
+    return this.entrepriseService.getNotificationSettings();
+  }
+
+  @Patch('notifications/settings/:id')
+  updateNotificationSetting(
+    @Param('id') id: string,
+    @Body('enabled') enabled: boolean
+  ) {
+    return this.entrepriseService.updateNotificationSetting(parseInt(id), enabled);
+  }
+
   @Get('notifications')
   getNotifications() {
     return this.entrepriseService.getNotifications();
   }
 
-  // GET /api/entreprise/rapports
   @Get('rapports')
   getRapports() {
     return this.entrepriseService.getRapports();
   }
 
-  // GET /api/entreprise/rapport/:id/download
   @Get('rapport/:id/download')
   downloadReport(@Param('id') id: string, @Res() res) {
     const csv = this.entrepriseService.downloadReport(id);

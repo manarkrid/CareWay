@@ -1,12 +1,23 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import './HistoriqueSection.css';
 
 const HistoriqueSection = () => {
-  const stats = [
-    { label: 'Total trajets acceptés/refusés', value: '3 359' },
-    { label: 'Retards signalés', value: '3' },
-    { label: 'Annulations patients', value: '12' },
-    { label: 'Incidents transports', value: '1 (1 rapport dispo)' }
+  const [stats, setStats] = useState(null);
+
+  useEffect(() => {
+    fetch('http://localhost:3001/api/entreprise/historique')
+      .then(res => res.json())
+      .then(data => setStats(data))
+      .catch(err => console.error("Error fetching stats:", err));
+  }, []);
+
+  if (!stats) return <div className="section historique-section">Chargement...</div>;
+
+  const displayItems = [
+    { label: 'Total trajets', value: stats.totalTrajets },
+    { label: 'Retards signalés', value: stats.retards, color: '#f44336' },
+    { label: 'Annulations patients', value: stats.annulations, color: '#ff9800' },
+    { label: 'Incidents transports', value: stats.incidents, color: '#f44336' }
   ];
 
   return (
@@ -15,13 +26,28 @@ const HistoriqueSection = () => {
         <h2>Historique & Statistiques</h2>
       </div>
       
-      <div className="stats-list">
-        {stats.map((stat, index) => (
-          <div key={index} className="stat-item">
-            <span className="stat-label">{stat.label}</span>
-            <span className="stat-value">{stat.value}</span>
+      <div className="stats-grid">
+        {displayItems.map((item, index) => (
+          <div key={index} className="stat-card">
+            <span className="stat-label">{item.label}</span>
+            <span className="stat-value" style={{ color: item.color || '#333' }}>
+              {item.value}
+            </span>
           </div>
         ))}
+      </div>
+
+      <div className="satisfaction-box">
+        <div className="satisfaction-header">
+          <span>Taux de satisfaction</span>
+          <span>{stats.tauxSatisfaction}</span>
+        </div>
+        <div className="progress-bar">
+          <div 
+            className="progress-fill" 
+            style={{ width: stats.tauxSatisfaction }}
+          ></div>
+        </div>
       </div>
     </div>
   );

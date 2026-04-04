@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import './Sidebar.css';
 
 
@@ -11,6 +11,16 @@ const Sidebar = ({ currentPage, setCurrentPage, onLogout, user }) => {
     { id: 'patients', icon: '👥', label: 'Patients' },
     { id: 'calendrier', icon: '📅', label: 'Calendrier' }
   ];
+
+  const [nextTrip, setNextTrip] = useState(null);
+  const [showDetails, setShowDetails] = useState(false);
+
+  useEffect(() => {
+    fetch('http://localhost:3001/api/entreprise/trajets/next')
+      .then(res => res.json())
+      .then(data => setNextTrip(data))
+      .catch(err => console.error("Error fetching next trip:", err));
+  }, []);
 
   return (
     <div className="sidebar">
@@ -55,21 +65,35 @@ const Sidebar = ({ currentPage, setCurrentPage, onLogout, user }) => {
         </div>
 
 
-        <div className="trip-info">
-          <div className="trip-badge">
-            <span className="trip-date">31</span>
-            <span className="trip-label">Trajet à venir</span>
+        {nextTrip && (
+          <div className="trip-info">
+            <div className="trip-badge">
+              <span className="trip-date">{nextTrip.date}</span>
+              <span className="trip-label">{nextTrip.label}</span>
+            </div>
+            <div className="trip-details">
+              <span className="trip-participant">🔴 {nextTrip.participant}</span>
+            </div>
+            <div className="trip-time">
+              <span className="departure">{nextTrip.departure}</span>
+              <span className="arrow">→</span>
+              <span className="arrival">{nextTrip.arrival}</span>
+            </div>
+            <button
+              className="trip-details-btn"
+              onClick={() => setShowDetails(!showDetails)}
+            >
+              📋 {showDetails ? 'Cacher détails' : 'Plus de détails'}
+            </button>
+
+            {showDetails && (
+              <div className="trip-popup-details">
+                <p><strong>Note:</strong> {nextTrip.details}</p>
+
+              </div>
+            )}
           </div>
-          <div className="trip-details">
-            <span className="trip-participant">🔴 Annie Robert par Loic</span>
-          </div>
-          <div className="trip-time">
-            <span className="departure">8:45 EHPAD</span>
-            <span className="arrow">→</span>
-            <span className="arrival">10:45 Ct. Sidobre</span>
-          </div>
-          <button className="trip-details-btn">📋 Plus de détails</button>
-        </div>
+        )}
       </div>
     </div>
   );

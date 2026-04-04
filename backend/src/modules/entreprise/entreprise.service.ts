@@ -2,14 +2,42 @@ import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class EntrepriseService {
+  private equipe = [
+    { id: 1, nom: 'Loic Dupont', emplacement: 'Castres', absence: 2, activite: 90, statut: 'Disponible' },
+    { id: 2, nom: 'Pierre Bois', emplacement: 'Toulouse', absence: 1, activite: 95, statut: 'En trajet' },
+    { id: 3, nom: 'Jose Gomez', emplacement: 'Castres', absence: 4, activite: 88, statut: 'Disponible' },
+    { id: 4, nom: 'Marie Lefèvre', emplacement: 'Castres', absence: 0, activite: 98, statut: 'En trajet' },
+    { id: 5, nom: 'Jean Petit', emplacement: 'Albi', absence: 3, activite: 82, statut: 'Congés' },
+  ];
+
+  private notificationSettings = [
+    { id: 1, label: 'Refus auto', description: 'Trajets à 15€ / à -3km', enabled: true },
+    { id: 2, label: 'Refus auto', description: 'Trajets à 1h d\'avance', enabled: true },
+    { id: 3, label: 'Notification conflit planning', description: '', enabled: true },
+    { id: 4, label: 'Alerte maintenance véhicule', description: '7j avant', enabled: true }
+  ];
+
+  private trajets = [
+    { id: '#TR-2038', date: '31/07/2025', conducteur: 'Loic Dupont', patient: 'L. Martin', destination: 'Toulouse', distance: '18km', statut: 'Terminé', month: 'Juillet' },
+    { id: '#TR-2037', date: '31/07/2025', conducteur: 'Pierre Bois', patient: 'J. Roux', destination: 'Castres', distance: '12km', statut: 'Terminé', month: 'Juillet' },
+    { id: '#TR-2036', date: '30/08/2025', conducteur: 'Jose Gomez', patient: 'H. Bernard', destination: 'Albi', distance: '25km', statut: 'En cours', month: 'Août' },
+    { id: '#TR-2035', date: '30/08/2025', conducteur: 'Marie Lefèvre', patient: 'E. Dupont', destination: 'Mazamet', distance: '20km', statut: 'Planifié', month: 'Août' },
+  ];
+
   getEquipe() {
-    return [
-      { nom: 'Loic Dupont', emplacement: 'Castres', absence: 2, activite: 90, statut: 'Disponible' },
-      { nom: 'Pierre Bois', emplacement: 'Toulouse', absence: 1, activite: 95, statut: 'En trajet' },
-      { nom: 'Jose Gomez', emplacement: 'Castres', absence: 4, activite: 88, statut: 'Disponible' },
-      { nom: 'Marie Lefèvre', emplacement: 'Castres', absence: 0, activite: 98, statut: 'En trajet' },
-      { nom: 'Jean Petit', emplacement: 'Albi', absence: 3, activite: 82, statut: 'Congés' },
-    ];
+    return this.equipe;
+  }
+
+  addEmployee(employee: any) {
+    const newEmployee = {
+      id: this.equipe.length + 1,
+      ...employee,
+      absence: 0,
+      activite: 100,
+      statut: employee.statut || 'Disponible'
+    };
+    this.equipe.push(newEmployee);
+    return newEmployee;
   }
 
   getVehicules() {
@@ -21,13 +49,22 @@ export class EntrepriseService {
     ];
   }
 
-  getTrajets() {
-    return [
-      { id: '#TR-2038', date: '31/07/2025', conducteur: 'Loic Dupont', patient: 'L. Martin', distance: '18km', statut: 'Terminé' },
-      { id: '#TR-2037', date: '31/07/2025', conducteur: 'Pierre Bois', patient: 'J. Roux', distance: '12km', statut: 'Terminé' },
-      { id: '#TR-2036', date: '30/07/2025', conducteur: 'Jose Gomez', patient: 'H. Bernard', distance: '25km', statut: 'En cours' },
-      { id: '#TR-2035', date: '30/07/2025', conducteur: 'Marie Lefèvre', patient: 'E. Dupont', distance: '20km', statut: 'Planifié' },
-    ];
+  getTrajets(month?: string) {
+    if (month && month !== 'Tout') {
+      return this.trajets.filter(t => t.month === month);
+    }
+    return this.trajets;
+  }
+
+  getNextTrip() {
+    return {
+      date: '31',
+      label: 'Trajet à venir',
+      participant: 'Annie Robert par Loic',
+      departure: '8:45 EHPAD',
+      arrival: '10:45 Ct. Sidobre',
+      details: 'Soin régulier, nécessite assistance au fauteuil.'
+    };
   }
 
   getContrats() {
@@ -49,10 +86,25 @@ export class EntrepriseService {
         { month: 'Jun', value: 48 },
         { month: 'Jul', value: 77 },
       ],
-      totalTrajets: 3342,
+      totalTrajets: this.trajets.length + 3342,
       totalRevenu: '115 420€',
       tauxSatisfaction: '94%',
+      retards: 3,
+      annulations: 12,
+      incidents: 1
     };
+  }
+
+  getNotificationSettings() {
+    return this.notificationSettings;
+  }
+
+  updateNotificationSetting(id: number, enabled: boolean) {
+    const setting = this.notificationSettings.find(s => s.id === id);
+    if (setting) {
+      setting.enabled = enabled;
+    }
+    return setting;
   }
 
   getNotifications() {
@@ -81,4 +133,4 @@ export class EntrepriseService {
     // Simulate CSV content
     return `Titre,Type,Date,Trajets,Revenus,Taux Acceptation\n${report.titre},${report.type},${report.date},${report.trajets},"${report.revenus}",${report.tauxAcceptation}`;
   }
-}
+}

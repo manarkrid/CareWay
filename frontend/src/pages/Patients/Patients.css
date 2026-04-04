@@ -333,3 +333,99 @@
     align-items: flex-start;
   }
 }
+/* Ajoute dans Patients.css */
+.patient-modal {
+  max-width: 560px;
+  width: 90%;
+}
+
+.modal-patient-info {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.modal-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #1a73e8, #0d47a1);
+  color: white;
+  font-size: 20px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-subtitle {
+  color: #888;
+  font-size: 13px;
+}
+
+.modal-patient-details {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 16px 24px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.detail-chip {
+  background: #f5f7ff;
+  border-radius: 20px;
+  padding: 6px 12px;
+  font-size: 13px;
+  color: #555;
+}
+
+.docs-title {
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  color: #333;
+}
+
+.docs-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.doc-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  background: #f9f9f9;
+  border-radius: 10px;
+  border: 1px solid #eee;
+}
+
+.doc-icon { font-size: 22px; }
+
+.doc-info { flex: 1; }
+.doc-name { font-weight: 500; font-size: 14px; }
+.doc-meta { font-size: 12px; color: #999; margin-top: 2px; }
+
+.doc-statut {
+  font-size: 12px;
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-weight: 500;
+}
+
+.doc-statut.valide { background: #e8f5e9; color: #2e7d32; }
+.doc-statut.expire { background: #fdecea; color: #c62828; }
+
+.btn-doc-download {
+  background: #e8f0fe;
+  border: none;
+  border-radius: 8px;
+  padding: 6px 10px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background 0.2s;
+}
+
+.btn-doc-download:hover { background: #c5d8fd; }

@@ -18,7 +18,6 @@ const priceMarkers = [
   { id: 9, price: 23, position: [43.612, 2.238] }, { id: 10, price: 34, position: [43.606, 2.246] },
 ];
 
-// Modal détail mission
 const DetailModal = ({ demande, onClose, onUpdate }) => {
   const [notes, setNotes] = useState(demande.notes || '');
   const [statut, setStatut] = useState(demande.status || 'Attente');
@@ -46,11 +45,8 @@ const DetailModal = ({ demande, onClose, onUpdate }) => {
           <div className="detail-row">
             <span className="detail-label">Statut</span>
             <select value={statut} onChange={e => setStatut(e.target.value)} className="detail-select">
-              <option>Attente</option>
-              <option>Acceptée</option>
-              <option>Refusée</option>
-              <option>En cours</option>
-              <option>Terminée</option>
+              <option>Attente</option><option>Acceptée</option><option>Refusée</option>
+              <option>En cours</option><option>Terminée</option>
             </select>
           </div>
           <div className="detail-notes">
@@ -75,6 +71,11 @@ const Demandes = ({ filterQuery = '' }) => {
   const [demandes, setDemandes] = useState([]);
   const [selectedDemande, setSelectedDemande] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
+  
+  // ✅ Nouveau state pour le tri
+  const [sortOrder, setSortOrder] = useState('asc'); // 'asc' = prix croissant, 'desc' = prix décroissant
+  const [showSortDropdown, setShowSortDropdown] = useState(false);
+
   const itemsPerPage = 5;
 
   useEffect(() => {
@@ -82,9 +83,12 @@ const Demandes = ({ filterQuery = '' }) => {
       .then(res => res.json())
       .then(data => setDemandes(data))
       .catch(() => setDemandes([
-        { id: 1, name: 'Marie Dubois', date: '30/06/25', time: '10h15', from: '4 rue Foch', to: 'CHIC Castres Mazamet', type: 'VSL', direction: 'Aller-simple', distance: '22km', duration: '35mins', status: 'Attente', wait: '1h', price: 54 },
-        { id: 2, name: 'François Dupont', date: '22/06/25', time: '8h30', from: '6 av. Trois', to: 'Clinique du Sidobre', type: 'VSL', direction: 'Aller-simple', distance: '22km', duration: '26mins', status: 'Attente', wait: '30mins', price: 43 },
-        { id: 3, name: 'Anne Pichet', date: '20/06/25', time: '9h15', from: '32 rue du Lilas', to: 'EHPAD', type: 'VSL', direction: 'Aller-simple', distance: '19km', duration: '15mins', status: 'Attente', price: 36 },
+        { id: 1, name: 'Marie Dubois', date: '30/06/25', time: '10h15', from: '4 rue Foch', to: 'CHIC Castres Mazamet', type: 'VSL', direction: 'Aller-simple', distance: '22km', duration: '35mins', status: 'Attente', wait: '1h', price: 54, mutualisable: true },
+        { id: 2, name: 'François Dupont', date: '22/06/25', time: '8h30', from: '6 av. Trois', to: 'Clinique du Sidobre', type: 'VSL', direction: 'Aller-simple', distance: '22km', duration: '26mins', status: 'Attente', wait: '30mins', price: 43, mutualisable: false },
+        { id: 3, name: 'Anne Pichet', date: '20/06/25', time: '9h15', from: '32 rue du Lilas', to: 'EHPAD', type: 'VSL', direction: 'Aller-simple', distance: '19km', duration: '15mins', status: 'Attente', price: 36, mutualisable: true },
+        { id: 4, name: 'Jean Delarue', date: '29/06/25', time: '16h', from: '2 rue Tulipe', to: 'CHIC Castres Mazamet', type: 'Ambulance', direction: 'Aller-retour', distance: '11km', duration: '8mins', status: 'Attente', wait: '1h30', price: 23, mutualisable: true },
+        { id: 5, name: 'Sophie Martin', date: '28/06/25', time: '11h00', from: '5 rue Pasteur', to: 'Clinique Nord', type: 'VSL', direction: 'Aller-simple', distance: '15km', duration: '20mins', status: 'Attente', price: 29, mutualisable: false },
+        { id: 6, name: 'Paul Bernard', date: '27/06/25', time: '9h00', from: '10 av. Gambetta', to: 'Centre Médical', type: 'VSL', direction: 'Aller-retour', distance: '8km', duration: '12mins', status: 'Attente', price: 18, mutualisable: true },
       ]));
   }, []);
 
@@ -116,11 +120,17 @@ const Demandes = ({ filterQuery = '' }) => {
     } catch {}
   };
 
-  const filtered = demandes.filter(d =>
-    (d.name?.toLowerCase().includes(filterQuery.toLowerCase())) ||
-    (d.from?.toLowerCase().includes(filterQuery.toLowerCase())) ||
-    (d.to?.toLowerCase().includes(filterQuery.toLowerCase()))
-  );
+  // ✅ Filtre par recherche + mutualisé + tri par prix
+  const filtered = demandes
+    .filter(d =>
+      (d.name?.toLowerCase().includes(filterQuery.toLowerCase())) ||
+      (d.from?.toLowerCase().includes(filterQuery.toLowerCase())) ||
+      (d.to?.toLowerCase().includes(filterQuery.toLowerCase()))
+    )
+    // ✅ Filtre mutualisé : si activé, affiche seulement les trajets mutualisables
+    .filter(d => mutualise ? d.mutualisable === true : true)
+    // ✅ Tri par prix
+    .sort((a, b) => sortOrder === 'asc' ? a.price - b.price : b.price - a.price);
 
   const totalPages = Math.ceil(filtered.length / itemsPerPage);
   const paginated = filtered.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
@@ -150,19 +160,49 @@ const Demandes = ({ filterQuery = '' }) => {
               </div>
             </div>
             <div className="controls-right-group">
+
+              {/* ✅ Toggle Mutualisé fonctionnel */}
               <div className="mutualise-toggle">
                 <span>Mutualisé</span>
                 <label className="toggle-switch">
-                  <input type="checkbox" checked={mutualise} onChange={() => setMutualise(!mutualise)} />
+                  <input type="checkbox" checked={mutualise} onChange={() => {
+                    setMutualise(!mutualise);
+                    setCurrentPage(1); // reset page
+                  }} />
                   <span className="toggle-slider"></span>
                 </label>
               </div>
-              <div className="sort-filter">Trier par : <span className="sort-value">Prix</span></div>
+
+              {/* ✅ Tri par prix fonctionnel avec dropdown */}
+              <div className="sort-filter" style={{ position: 'relative' }}>
+                <span onClick={() => setShowSortDropdown(!showSortDropdown)} style={{ cursor: 'pointer' }}>
+                  Trier par : <span className="sort-value">
+                    Prix {sortOrder === 'asc' ? '↑' : '↓'}
+                  </span>
+                </span>
+                {showSortDropdown && (
+                  <div className="sort-dropdown">
+                    <div
+                      className={`sort-option ${sortOrder === 'asc' ? 'active' : ''}`}
+                      onClick={() => { setSortOrder('asc'); setShowSortDropdown(false); setCurrentPage(1); }}
+                    >
+                      Prix croissant ↑
+                    </div>
+                    <div
+                      className={`sort-option ${sortOrder === 'desc' ? 'active' : ''}`}
+                      onClick={() => { setSortOrder('desc'); setShowSortDropdown(false); setCurrentPage(1); }}
+                    >
+                      Prix décroissant ↓
+                    </div>
+                  </div>
+                )}
+              </div>
+
             </div>
           </div>
 
           <div className="demandes-list">
-            {paginated.map(demande => (
+            {paginated.length > 0 ? paginated.map(demande => (
               <div key={demande.id} className={`demande-card ${getStatusClass(demande.status)}`}>
                 <div className="demande-header-row">
                   <div>
@@ -171,6 +211,10 @@ const Demandes = ({ filterQuery = '' }) => {
                   </div>
                   <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 4 }}>
                     <div className="demande-price">{demande.price}€</div>
+                    {/* ✅ Badge mutualisé si applicable */}
+                    {demande.mutualisable && (
+                      <span className="badge-mutualise">Mutualisable</span>
+                    )}
                     <span className={`status-badge ${getStatusClass(demande.status)}`}>{demande.status}</span>
                   </div>
                 </div>
@@ -193,10 +237,13 @@ const Demandes = ({ filterQuery = '' }) => {
                   </button>
                 </div>
               </div>
-            ))}
+            )) : (
+              <div style={{ textAlign: 'center', padding: '40px', color: '#999' }}>
+                Aucune demande {mutualise ? 'mutualisable ' : ''}trouvée
+              </div>
+            )}
           </div>
 
-          {/* Pagination Demandes */}
           {totalPages > 1 && (
             <div className="demandes-pagination">
               <button className="pagination-arrow" onClick={() => setCurrentPage(p => Math.max(1, p - 1))} disabled={currentPage === 1}>‹</button>

@@ -1,11 +1,16 @@
 export declare class EntrepriseService {
+    private equipe;
+    private notificationSettings;
+    private trajets;
     getEquipe(): {
+        id: number;
         nom: string;
         emplacement: string;
         absence: number;
         activite: number;
         statut: string;
     }[];
+    addEmployee(employee: any): any;
     getVehicules(): {
         id: string;
         immatriculation: string;
@@ -14,14 +19,24 @@ export declare class EntrepriseService {
         statut: string;
         km: number;
     }[];
-    getTrajets(): {
+    getTrajets(month?: string): {
         id: string;
         date: string;
         conducteur: string;
         patient: string;
+        destination: string;
         distance: string;
         statut: string;
+        month: string;
     }[];
+    getNextTrip(): {
+        date: string;
+        label: string;
+        participant: string;
+        departure: string;
+        arrival: string;
+        details: string;
+    };
     getContrats(): {
         id: string;
         organisme: string;
@@ -38,6 +53,21 @@ export declare class EntrepriseService {
         totalTrajets: number;
         totalRevenu: string;
         tauxSatisfaction: string;
+        retards: number;
+        annulations: number;
+        incidents: number;
+    };
+    getNotificationSettings(): {
+        id: number;
+        label: string;
+        description: string;
+        enabled: boolean;
+    }[];
+    updateNotificationSetting(id: number, enabled: boolean): {
+        id: number;
+        label: string;
+        description: string;
+        enabled: boolean;
     };
     getNotifications(): {
         id: number;

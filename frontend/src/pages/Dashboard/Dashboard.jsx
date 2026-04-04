@@ -1,7 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './Dashboard.css';
 
 const Dashboard = () => {
+  // Ajoute ces states en haut de ton composant
+  const [showFilter, setShowFilter] = useState(false);
+  const [filtreStatut, setFiltreStatut] = useState('Tous');
+
   // Dashboard CareWay - Version mise à jour
   console.log('Dashboard component loaded - New layout applied');
   // Données pour les statistiques principales
@@ -77,6 +81,11 @@ const Dashboard = () => {
     }
   ];
 
+  // Filtre les données selon le statut sélectionné
+  const equipeFiltered = filtreStatut === 'Tous'
+    ? equipeData
+    : equipeData.filter(e => e.statut === filtreStatut);
+
   return (
     <div className="dashboard-container">
       {/* Statistiques principales */}
@@ -138,47 +147,64 @@ const Dashboard = () => {
       {/* Section inférieure avec Équipe et Répartition côte à côte */}
       <div className="bottom-section">
         {/* Section Équipe */}
-        <div className="equipe-section">
-          <div className="section-header">
-            <h3>Équipe</h3>
-            <button className="filter-btn">Filtrer ⚙️</button>
-          </div>
-          <div className="equipe-table">
-            <table>
-              <thead>
-                <tr>
-                  <th>Nom de l'employé</th>
-                  <th>Emplacement</th>
-                  <th>Absence</th>
-                  <th>Taux d'activité</th>
-                  <th>Statut</th>
-                </tr>
-              </thead>
-              <tbody>
-                {equipeData.map((employee, index) => (
-                  <tr key={index}>
-                    <td>
-                      <div className="employee-info">
-                        <div className="employee-avatar">👤</div>
-                        <span>{employee.nom}</span>
-                      </div>
-                    </td>
-                    <td>{employee.emplacement}</td>
-                    <td>{employee.absence}</td>
-                    <td>
-                      <span className="activity-rate">+{employee.activite}%</span>
-                    </td>
-                    <td>
-                      <span className={`status ${employee.statut === 'Disponible' ? 'available' : 'busy'}`}>
-                        {employee.statut}
-                      </span>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+        {/* Section Équipe */}
+<div className="equipe-section">
+  <div className="section-header">
+    <h3>Équipe</h3>
+    <div className="filter-wrapper">
+      <button className="filter-btn" onClick={() => setShowFilter(!showFilter)}>
+        Filtrer ⚙️
+      </button>
+      {showFilter && (
+        <div className="filter-dropdown">
+          {['Tous', 'Disponible', 'En trajet', 'Congés'].map(option => (
+            <div
+              key={option}
+              className={`filter-option ${filtreStatut === option ? 'active' : ''}`}
+              onClick={() => { setFiltreStatut(option); setShowFilter(false); }}
+            >
+              {option}
+            </div>
+          ))}
         </div>
+      )}
+    </div>
+  </div>
+
+  <div className="equipe-table">
+    <table>
+      <thead>
+        <tr>
+          <th>Nom de l'employé</th>
+          <th>Emplacement</th>
+          <th>Absence</th>
+          <th>Taux d'activité</th>
+          <th>Statut</th>
+        </tr>
+      </thead>
+      <tbody>
+        {equipeFiltered.map((employee, index) => (
+          <tr key={index}>
+            <td>
+              <div className="employee-info">
+                <div className="employee-avatar">👤</div>
+                <span>{employee.nom}</span>
+              </div>
+            </td>
+            <td>{employee.emplacement}</td>
+            <td>{employee.absence}</td>
+            <td><span className="activity-rate">+{employee.activite}%</span></td>
+            <td>
+              <span className={`status ${employee.statut === 'Disponible' ? 'available' : 'busy'}`}>
+                {employee.statut}
+              </span>
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+</div>
 
         {/* Section Répartition des patients */}
         <div className="patients-repartition">

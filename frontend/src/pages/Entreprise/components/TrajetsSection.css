@@ -2,5 +2,84 @@
 @import './EquipeSection.css';
 
 .trajets-section {
-  /* Styles spécifiques aux trajets si nécessaire */
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.month-select {
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid #e9ecef;
+  background: white;
+  font-size: 14px;
+  color: #333;
+  cursor: pointer;
+  outline: none;
+}
+
+.month-select:focus {
+  border-color: #2196f3;
+}
+
+.upcoming-trajets {
+  margin-top: 10px;
+}
+
+.upcoming-trajets h3 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 16px;
+}
+
+.upcoming-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+.upcoming-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  background: #f8f9fa;
+  border-radius: 12px;
+  border-left: 4px solid #2196f3;
+  transition: transform 0.2s, box-shadow 0.2s;
+  cursor: pointer;
+}
+
+.upcoming-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.card-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #2196f3;
+}
+
+.card-dot.orange {
+  background: #ff9800;
+}
+
+.card-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.card-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+}
+
+.card-subtitle {
+  font-size: 12px;
+  color: #666;
 }
