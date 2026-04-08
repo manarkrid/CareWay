@@ -1,8 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import './Sidebar.css';
-
+import { useTrips } from '../../context/TripContext';
 
 const Sidebar = ({ currentPage, setCurrentPage, onLogout, user }) => {
+  const { nextTrip } = useTrips();
+  const [showDetails, setShowDetails] = useState(false);
+
   const menuItems = [
     { id: 'dashboard', icon: '📊', label: 'Tableau de bord' },
     { id: 'transactions', icon: '💳', label: 'Transactions' },
@@ -11,16 +14,6 @@ const Sidebar = ({ currentPage, setCurrentPage, onLogout, user }) => {
     { id: 'patients', icon: '👥', label: 'Patients' },
     { id: 'calendrier', icon: '📅', label: 'Calendrier' }
   ];
-
-  const [nextTrip, setNextTrip] = useState(null);
-  const [showDetails, setShowDetails] = useState(false);
-
-  useEffect(() => {
-    fetch('http://localhost:3001/api/entreprise/trajets/next')
-      .then(res => res.json())
-      .then(data => setNextTrip(data))
-      .catch(err => console.error("Error fetching next trip:", err));
-  }, []);
 
   return (
     <div className="sidebar">

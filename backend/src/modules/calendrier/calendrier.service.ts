@@ -1,28 +1,26 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Inject, forwardRef } from '@nestjs/common';
+import { EntrepriseService } from '../entreprise/entreprise.service';
 
 @Injectable()
 export class CalendrierService {
-  private todayTrajets = [
-    { id: 1, heure: '08:30', client: 'Hôpital Central', personne: 'Loïc', statut: 'En cours' },
-    { id: 2, heure: '10:15', client: 'Clinique Nord', personne: 'Marie', statut: 'À venir' },
-    { id: 3, heure: '14:00', client: 'Centre Médical', personne: 'Paul', statut: 'À venir' },
-    { id: 4, heure: '16:45', client: 'Résidence Soleil', personne: 'Jean', statut: 'Planifié' },
-  ];
+  constructor(private readonly entrepriseService: EntrepriseService) {}
+
+  private todayTrajets = [];
 
   getTodayTrajets() {
-    return this.todayTrajets;
+    // Return both local mock and trips from entreprise
+    const entrepriseTrips = this.entrepriseService.getTrajets().map(t => ({
+      id: t.id,
+      heure: (t as any).raw?.heureDebut || '00:00',
+      client: t.patient,
+      personne: t.conducteur.split(' ')[0],
+      statut: t.statut
+    }));
+    return entrepriseTrips;
   }
 
   addTrajet(trajetData: any) {
-    const newTrajet = {
-      id: this.todayTrajets.length + 1,
-      heure: trajetData.heureDebut || '00:00',
-      client: trajetData.nom || 'Nouveau trajet',
-      personne: trajetData.personnes && trajetData.personnes.length > 0 ? trajetData.personnes[0].nom : 'Non assigné',
-      statut: 'Planifié',
-    };
-    this.todayTrajets.push(newTrajet);
-    return newTrajet;
+    return this.entrepriseService.addTrajet(trajetData);
   }
 
   getTeam() {

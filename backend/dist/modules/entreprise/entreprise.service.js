@@ -24,10 +24,11 @@ let EntrepriseService = class EntrepriseService {
             { id: 4, label: 'Alerte maintenance véhicule', description: '7j avant', enabled: true }
         ];
         this.trajets = [
-            { id: '#TR-2038', date: '31/07/2025', conducteur: 'Loic Dupont', patient: 'L. Martin', destination: 'Toulouse', distance: '18km', statut: 'Terminé', month: 'Juillet' },
-            { id: '#TR-2037', date: '31/07/2025', conducteur: 'Pierre Bois', patient: 'J. Roux', destination: 'Castres', distance: '12km', statut: 'Terminé', month: 'Juillet' },
-            { id: '#TR-2036', date: '30/08/2025', conducteur: 'Jose Gomez', patient: 'H. Bernard', destination: 'Albi', distance: '25km', statut: 'En cours', month: 'Août' },
-            { id: '#TR-2035', date: '30/08/2025', conducteur: 'Marie Lefèvre', patient: 'E. Dupont', destination: 'Mazamet', distance: '20km', statut: 'Planifié', month: 'Août' },
+            { id: '#TR-2038', date: '31/07/2025', conducteur: 'Loic Dupont', patient: 'L. Martin', destination: 'Toulouse', distance: '18km', statut: 'Terminé', month: 'Juillet', raw: {} },
+            { id: '#TR-2037', date: '31/07/2025', conducteur: 'Pierre Bois', patient: 'J. Roux', destination: 'Castres', distance: '12km', statut: 'Terminé', month: 'Juillet', raw: {} },
+            { id: '#TR-2036', date: '30/08/2025', conducteur: 'Jose Gomez', patient: 'H. Bernard', destination: 'Albi', distance: '25km', statut: 'En cours', month: 'Août', raw: {} },
+            { id: '#TR-2035', date: '30/08/2025', conducteur: 'Marie Lefèvre', patient: 'E. Dupont', destination: 'Mazamet', distance: '20km', statut: 'Planifié', month: 'Août', raw: {} },
+            { id: '#TR-2034', date: '29/08/2025', conducteur: 'Jean Petit', patient: 'A. Robert', destination: 'Castres', distance: '5km', statut: 'Refusé', month: 'Août', raw: {} },
         ];
     }
     getEquipe() {
@@ -58,15 +59,38 @@ let EntrepriseService = class EntrepriseService {
         }
         return this.trajets;
     }
-    getNextTrip() {
-        return {
-            date: '31',
-            label: 'Trajet à venir',
-            participant: 'Annie Robert par Loic',
-            departure: '8:45 EHPAD',
-            arrival: '10:45 Ct. Sidobre',
-            details: 'Soin régulier, nécessite assistance au fauteuil.'
+    addTrajet(trajetData) {
+        const months = ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
+        const now = new Date();
+        const currentMonth = months[now.getMonth()];
+        const newTrajet = {
+            id: `#TR-${2038 + this.trajets.length}`,
+            date: trajetData.dateDebut || now.toLocaleDateString('fr-FR'),
+            conducteur: trajetData.personnes?.[0]?.nom || 'Non assigné',
+            patient: trajetData.nom || 'Patient inconnu',
+            destination: trajetData.adresse || 'Destination inconnue',
+            distance: '0km',
+            statut: 'Planifié',
+            month: currentMonth,
+            raw: trajetData
         };
+        this.trajets.unshift(newTrajet);
+        return newTrajet;
+    }
+    getNextTrip() {
+        const next = this.trajets.find(t => t.statut === 'Planifié' || t.statut === 'En cours');
+        if (next) {
+            const raw = next.raw;
+            return {
+                date: next.date.split('/')[0] || '??',
+                label: 'Trajet à venir',
+                participant: `${next.patient} par ${next.conducteur.split(' ')[0]}`,
+                departure: (raw?.heureDebut || '00:00') + ' ' + (raw?.adresse || 'Lieu'),
+                arrival: (raw?.heureFin || '00:00') + ' ' + (next.destination || 'Destination'),
+                details: raw?.repetition !== 'Aucune' ? `Répétition: ${raw?.repetition}` : 'Trajet ponctuel.'
+            };
+        }
+        return null;
     }
     getContrats() {
         return [
@@ -86,13 +110,45 @@ let EntrepriseService = class EntrepriseService {
                 { month: 'Jun', value: 48 },
                 { month: 'Jul', value: 77 },
             ],
-            totalTrajets: this.trajets.length + 3342,
+            totalTrajets: this.trajets.filter(t => t.statut === 'Terminé').length + 3342,
             totalRevenu: '115 420€',
             tauxSatisfaction: '94%',
             retards: 3,
-            annulations: 12,
+            annulations: this.trajets.filter(t => t.statut === 'Refusé').length + 12,
             incidents: 1
         };
+    }
+    getDashboardStats() {
+        return [
+            {
+                title: 'Total patients',
+                value: '856',
+                subtitle: 'Patients',
+                change: '+10.0%',
+                positive: true
+            },
+            {
+                title: 'Trajets effectués',
+                value: (this.trajets.filter(t => t.statut === 'Terminé').length + 3342).toLocaleString(),
+                subtitle: 'Trajets',
+                change: '+1.0%',
+                positive: true
+            },
+            {
+                title: 'Trajets en cours',
+                value: this.trajets.filter(t => t.statut === 'En cours').length.toString(),
+                subtitle: 'Trajets',
+                change: '+12.0%',
+                positive: true
+            },
+            {
+                title: 'Trajets refusés',
+                value: (this.trajets.filter(t => t.statut === 'Refusé').length + 17).toString(),
+                subtitle: 'Trajets',
+                change: '-7.0%',
+                positive: false
+            }
+        ];
     }
     getNotificationSettings() {
         return this.notificationSettings;

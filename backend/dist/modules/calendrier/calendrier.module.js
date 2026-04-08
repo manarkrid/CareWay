@@ -8,6 +8,7 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CalendrierModule = void 0;
 const common_1 = require("@nestjs/common");
+const entreprise_module_1 = require("../entreprise/entreprise.module");
 const calendrier_controller_1 = require("./calendrier.controller");
 const calendrier_service_1 = require("./calendrier.service");
 let CalendrierModule = class CalendrierModule {
@@ -15,6 +16,7 @@ let CalendrierModule = class CalendrierModule {
 exports.CalendrierModule = CalendrierModule;
 exports.CalendrierModule = CalendrierModule = __decorate([
     (0, common_1.Module)({
+        imports: [entreprise_module_1.EntrepriseModule],
         controllers: [calendrier_controller_1.CalendrierController],
         providers: [calendrier_service_1.CalendrierService],
     })

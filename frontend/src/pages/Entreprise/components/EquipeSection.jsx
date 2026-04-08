@@ -1,30 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import './EquipeSection.css';
 import AddEmployeeModal from './AddEmployeeModal.jsx';
+import { useTrips } from '../../../context/TripContext';
 
 const EquipeSection = () => {
-  const [equipeData, setEquipeData] = useState([]);
+  const { employees: equipeData, refreshTrips } = useTrips();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('Tous');
-
-  const fetchEquipe = () => {
-    fetch('http://localhost:3001/api/entreprise/equipe')
-      .then(res => res.json())
-      .then(data => setEquipeData(data))
-      .catch((err) => {
-        console.error("Error fetching equipe:", err);
-        setEquipeData([
-          { nom: 'Loic Dupont', emplacement: 'Castres', absence: 2, activite: 90, statut: 'Disponible' },
-          { nom: 'Pierre Bois', emplacement: 'Toulouse', absence: 1, activite: 95, statut: 'En trajet' },
-        ]);
-      });
-  };
-
-  useEffect(() => {
-    fetchEquipe();
-  }, []);
 
   const handleAddEmployee = (newEmployee) => {
     fetch('http://localhost:3001/api/entreprise/equipe', {
@@ -33,7 +17,7 @@ const EquipeSection = () => {
       body: JSON.stringify(newEmployee)
     })
     .then(res => res.json())
-    .then(() => fetchEquipe())
+    .then(() => refreshTrips())
     .catch(err => console.error("Error adding employee:", err));
   };
 

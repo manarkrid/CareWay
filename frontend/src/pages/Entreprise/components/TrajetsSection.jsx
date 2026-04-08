@@ -1,28 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import './TrajetsSection.css';
+import { useTrips } from '../../../context/TripContext';
 
 const TrajetsSection = () => {
-  const [trajetsData, setTrajetsData] = useState([]);
+  const { trips: trajetsData } = useTrips();
   const [selectedMonth, setSelectedMonth] = useState('Tout');
   const [showFilters, setShowFilters] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   
   const months = ['Tout', 'Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'];
-
-  const fetchTrajets = () => {
-    const url = `http://localhost:3001/api/entreprise/trajets?month=${selectedMonth}`;
-    fetch(url)
-      .then(res => res.json())
-      .then(data => setTrajetsData(data))
-      .catch(err => {
-        console.error("Error fetching trajets:", err);
-        setTrajetsData([]);
-      });
-  };
-
-  useEffect(() => {
-    fetchTrajets();
-  }, [selectedMonth]);
 
   const filteredTrajets = trajetsData.filter(t => {
     return t.conducteur.toLowerCase().includes(searchTerm.toLowerCase()) || 

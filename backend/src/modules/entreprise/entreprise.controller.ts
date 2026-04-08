@@ -40,6 +40,11 @@ export class EntrepriseController {
     return this.entrepriseService.getHistorique();
   }
 
+  @Get('dashboard-stats')
+  getDashboardStats() {
+    return this.entrepriseService.getDashboardStats();
+  }
+
   @Get('notifications/settings')
   getNotificationSettings() {
     return this.entrepriseService.getNotificationSettings();

@@ -28,7 +28,19 @@ export declare class EntrepriseService {
         distance: string;
         statut: string;
         month: string;
+        raw: {};
     }[];
+    addTrajet(trajetData: any): {
+        id: string;
+        date: any;
+        conducteur: any;
+        patient: any;
+        destination: any;
+        distance: string;
+        statut: string;
+        month: string;
+        raw: any;
+    };
     getNextTrip(): {
         date: string;
         label: string;
@@ -57,6 +69,13 @@ export declare class EntrepriseService {
         annulations: number;
         incidents: number;
     };
+    getDashboardStats(): {
+        title: string;
+        value: string;
+        subtitle: string;
+        change: string;
+        positive: boolean;
+    }[];
     getNotificationSettings(): {
         id: number;
         label: string;

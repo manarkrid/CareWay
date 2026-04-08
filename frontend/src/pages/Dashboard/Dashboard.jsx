@@ -1,44 +1,38 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './Dashboard.css';
 
 const Dashboard = () => {
-  // Ajoute ces states en haut de ton composant
   const [showFilter, setShowFilter] = useState(false);
   const [filtreStatut, setFiltreStatut] = useState('Tous');
+  const [mainStats, setMainStats] = useState([]);
+  const [equipeData, setEquipeData] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const [statsRes, equipeRes] = await Promise.all([
+          fetch('http://localhost:3001/api/entreprise/dashboard-stats'),
+          fetch('http://localhost:3001/api/entreprise/equipe')
+        ]);
+        
+        const statsJson = await statsRes.json();
+        const equipeJson = await equipeRes.json();
+        
+        setMainStats(statsJson);
+        setEquipeData(equipeJson);
+      } catch (err) {
+        console.error("Error fetching dashboard data:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   // Dashboard CareWay - Version mise à jour
-  console.log('Dashboard component loaded - New layout applied');
-  // Données pour les statistiques principales
-  const mainStats = [
-    {
-      title: 'Total patients',
-      value: '856',
-      subtitle: 'Patients',
-      change: '+10.0%',
-      positive: true
-    },
-    {
-      title: 'Trajets effectués',
-      value: '3,342',
-      subtitle: 'Trajets',
-      change: '+1.0%',
-      positive: true
-    },
-    {
-      title: 'Trajets en cours',
-      value: '9',
-      subtitle: 'Trajets',
-      change: '+12.0%',
-      positive: true
-    },
-    {
-      title: 'Trajets refusés',
-      value: '17',
-      subtitle: 'Trajets',
-      change: '-7.0%',
-      positive: false
-    }
-  ];
+  console.log('Dashboard component loaded - Dynamic stats applied');
 
   // Données pour le graphique d'évolution (simulées)
   const chartData = [
@@ -56,35 +50,14 @@ const Dashboard = () => {
     { month: 'Déc', value: 64 }
   ];
 
-  // Données pour l'équipe
-  const equipeData = [
-    {
-      nom: 'Loic Dupont',
-      emplacement: 'Castres',
-      absence: 2,
-      activite: 90,
-      statut: 'Disponible'
-    },
-    {
-      nom: 'Pierre Bois',
-      emplacement: 'Toulouse',
-      absence: 1,
-      activite: 95,
-      statut: 'En trajet'
-    },
-    {
-      nom: 'Jose Gomez',
-      emplacement: 'Castres',
-      absence: 4,
-      activite: 88,
-      statut: 'Disponible'
-    }
-  ];
-
   // Filtre les données selon le statut sélectionné
   const equipeFiltered = filtreStatut === 'Tous'
     ? equipeData
     : equipeData.filter(e => e.statut === filtreStatut);
+
+  if (loading) {
+    return <div className="dashboard-loading">Chargement des données...</div>;
+  }
 
   return (
     <div className="dashboard-container">

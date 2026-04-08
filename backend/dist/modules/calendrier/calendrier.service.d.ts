@@ -1,18 +1,25 @@
+import { EntrepriseService } from '../entreprise/entreprise.service';
 export declare class CalendrierService {
+    private readonly entrepriseService;
+    constructor(entrepriseService: EntrepriseService);
     private todayTrajets;
     getTodayTrajets(): {
-        id: number;
-        heure: string;
+        id: string;
+        heure: any;
         client: string;
         personne: string;
         statut: string;
     }[];
     addTrajet(trajetData: any): {
-        id: number;
-        heure: any;
-        client: any;
-        personne: any;
+        id: string;
+        date: any;
+        conducteur: any;
+        patient: any;
+        destination: any;
+        distance: string;
         statut: string;
+        month: string;
+        raw: any;
     };
     getTeam(): {
         id: number;

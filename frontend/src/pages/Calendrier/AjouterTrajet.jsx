@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import './AjouterTrajet.css';
+import { useTrips } from '../../context/TripContext';
 
 const AjouterTrajet = ({ isOpen, onClose, onSave }) => {
+  const { employees } = useTrips();
   const [formData, setFormData] = useState({
     nom: '',
     dateDebut: '',
@@ -33,12 +35,10 @@ const AjouterTrajet = ({ isOpen, onClose, onSave }) => {
     }
   ];
 
-  const personnesDisponibles = [
-    { id: 1, nom: "Loïc Dupont" },
-    { id: 2, nom: "Pierre Bois" },
-    { id: 3, nom: "Jean Martin" },
-    { id: 4, nom: "Paul Durand" }
-  ];
+  const personnesDisponibles = employees.map(emp => ({
+    id: emp.id,
+    nom: emp.nom
+  }));
 
   const joursOptions = ['L', 'M', 'M', 'J', 'V', 'S', 'D'];
   const heures = Array.from({ length: 24 }, (_, i) => {

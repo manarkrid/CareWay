@@ -17,6 +17,7 @@ import Login from './pages/Auth/Login.jsx';
 import Register from './pages/Auth/Register.jsx';
 import ForgotPassword from './pages/Auth/ForgotPassword.jsx';
 import ResetPassword from './pages/Auth/ResetPassword.jsx';
+import { TripProvider } from './context/TripContext.jsx';
 
 function App() {
   const [currentPage, setCurrentPage] = useState('login');
@@ -111,13 +112,15 @@ function App() {
 
   return (
     <div className="app debug-layout">
-      <Sidebar currentPage={currentPage} setCurrentPage={setCurrentPage} onLogout={handleLogout} user={user} />
-      <div className="main-content">
-        <Header user={user} onSearch={setGlobalSearch} onNavigate={setCurrentPage} onLogout={handleLogout} />
-        <main className="page-content">
-          {renderPage()}
-        </main>
-      </div>
+      <TripProvider>
+        <Sidebar currentPage={currentPage} setCurrentPage={setCurrentPage} onLogout={handleLogout} user={user} />
+        <div className="main-content">
+          <Header user={user} onSearch={setGlobalSearch} onNavigate={setCurrentPage} onLogout={handleLogout} />
+          <main className="page-content">
+            {renderPage()}
+          </main>
+        </div>
+      </TripProvider>
     </div>
   );
 }

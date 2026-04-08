@@ -5,31 +5,30 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CalendrierService = void 0;
 const common_1 = require("@nestjs/common");
+const entreprise_service_1 = require("../entreprise/entreprise.service");
 let CalendrierService = class CalendrierService {
-    constructor() {
-        this.todayTrajets = [
-            { id: 1, heure: '08:30', client: 'Hôpital Central', personne: 'Loïc', statut: 'En cours' },
-            { id: 2, heure: '10:15', client: 'Clinique Nord', personne: 'Marie', statut: 'À venir' },
-            { id: 3, heure: '14:00', client: 'Centre Médical', personne: 'Paul', statut: 'À venir' },
-            { id: 4, heure: '16:45', client: 'Résidence Soleil', personne: 'Jean', statut: 'Planifié' },
-        ];
+    constructor(entrepriseService) {
+        this.entrepriseService = entrepriseService;
+        this.todayTrajets = [];
     }
     getTodayTrajets() {
-        return this.todayTrajets;
+        const entrepriseTrips = this.entrepriseService.getTrajets().map(t => ({
+            id: t.id,
+            heure: t.raw?.heureDebut || '00:00',
+            client: t.patient,
+            personne: t.conducteur.split(' ')[0],
+            statut: t.statut
+        }));
+        return entrepriseTrips;
     }
     addTrajet(trajetData) {
-        const newTrajet = {
-            id: this.todayTrajets.length + 1,
-            heure: trajetData.heureDebut || '00:00',
-            client: trajetData.nom || 'Nouveau trajet',
-            personne: trajetData.personnes && trajetData.personnes.length > 0 ? trajetData.personnes[0].nom : 'Non assigné',
-            statut: 'Planifié',
-        };
-        this.todayTrajets.push(newTrajet);
-        return newTrajet;
+        return this.entrepriseService.addTrajet(trajetData);
     }
     getTeam() {
         return [
@@ -62,6 +61,7 @@ let CalendrierService = class CalendrierService {
 };
 exports.CalendrierService = CalendrierService;
 exports.CalendrierService = CalendrierService = __decorate([
-    (0, common_1.Injectable)()
+    (0, common_1.Injectable)(),
+    __metadata("design:paramtypes", [entreprise_service_1.EntrepriseService])
 ], CalendrierService);
 //# sourceMappingURL=calendrier.service.js.map

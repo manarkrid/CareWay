@@ -40,6 +40,9 @@ let EntrepriseController = class EntrepriseController {
     getHistorique() {
         return this.entrepriseService.getHistorique();
     }
+    getDashboardStats() {
+        return this.entrepriseService.getDashboardStats();
+    }
     getNotificationSettings() {
         return this.entrepriseService.getNotificationSettings();
     }
@@ -107,6 +110,12 @@ __decorate([
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", void 0)
 ], EntrepriseController.prototype, "getHistorique", null);
+__decorate([
+    (0, common_1.Get)('dashboard-stats'),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", []),
+    __metadata("design:returntype", void 0)
+], EntrepriseController.prototype, "getDashboardStats", null);
 __decorate([
     (0, common_1.Get)('notifications/settings'),
     __metadata("design:type", Function),

@@ -28,6 +28,7 @@ export declare class EntrepriseController {
         distance: string;
         statut: string;
         month: string;
+        raw: {};
     }[];
     getNextTrip(): {
         date: string;
@@ -57,6 +58,13 @@ export declare class EntrepriseController {
         annulations: number;
         incidents: number;
     };
+    getDashboardStats(): {
+        title: string;
+        value: string;
+        subtitle: string;
+        change: string;
+        positive: boolean;
+    }[];
     getNotificationSettings(): {
         id: number;
         label: string;
