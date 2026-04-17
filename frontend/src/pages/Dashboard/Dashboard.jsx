@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import API_BASE_URL from '../../services/apiConfig';
 import './Dashboard.css';
 
 const Dashboard = () => {
@@ -12,8 +13,8 @@ const Dashboard = () => {
     const fetchData = async () => {
       try {
         const [statsRes, equipeRes] = await Promise.all([
-          fetch('http://localhost:3001/api/entreprise/dashboard-stats'),
-          fetch('http://localhost:3001/api/entreprise/equipe')
+          fetch(`${API_BASE_URL}/entreprise/dashboard-stats`),
+          fetch(`${API_BASE_URL}/entreprise/equipe`)
         ]);
         
         const statsJson = await statsRes.json();
@@ -100,6 +101,7 @@ const Dashboard = () => {
             <span>60</span>
             <span>40</span>
             <span>20</span>
+            <span>0</span>
           </div>
           <div className="chart-bars">
             {chartData.map((data, index) => (
@@ -227,11 +229,11 @@ const Dashboard = () => {
             <div className="donut-legend">
               <div className="legend-item">
                 <span className="legend-dot blue"></span>
-                <span>65%</span>
+                <span>Hommes (65%)</span>
               </div>
               <div className="legend-item">
                 <span className="legend-dot green"></span>
-                <span>35%</span>
+                <span>Femmes (35%)</span>
               </div>
             </div>
           </div>

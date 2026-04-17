@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import API_BASE_URL from '../../../services/apiConfig';
 import './VehiculesSection.css';
 
 const EMPTY = { immatriculation: '', type: 'VSL', marque: '', km: '', statut: 'Disponible', prochainEntretien: '' };
@@ -16,7 +17,7 @@ const VehiculesSection = () => {
   const [typeFilter, setTypeFilter] = useState('Tous');
 
   useEffect(() => {
-    fetch('http://localhost:3001/api/entreprise/vehicules')
+    fetch(`${API_BASE_URL}/entreprise/vehicules`)
       .then(res => res.json())
       .then(data => setVehicules(data))
       .catch((err) => {

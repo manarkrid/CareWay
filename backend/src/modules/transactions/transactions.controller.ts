@@ -1,14 +1,17 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, UseGuards } from '@nestjs/common';
 import { TransactionsService } from './transactions.service';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { CurrentUser } from '../../common/decorators/current-user.decorator';
 
 @Controller('transactions')
+@UseGuards(JwtAuthGuard)
 export class TransactionsController {
   constructor(private readonly transactionsService: TransactionsService) { }
 
   // GET /api/transactions
   @Get()
-  getAll() {
-    return this.transactionsService.getAll();
+  getAll(@CurrentUser() user: any) {
+    return this.transactionsService.getAll(user.userId);
   }
 
   // GET /api/transactions/monthly

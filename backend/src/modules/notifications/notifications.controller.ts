@@ -1,17 +1,20 @@
-import { Controller, Get, Patch } from '@nestjs/common';
+import { Controller, Get, Patch, UseGuards } from '@nestjs/common';
+import { JwtAuthGuard } from '../auth/jwt-auth.guard';
+import { CurrentUser } from '../../common/decorators/current-user.decorator';
 import { NotificationsService } from './notifications.service';
 
 @Controller('notifications')
+@UseGuards(JwtAuthGuard)
 export class NotificationsController {
     constructor(private readonly notificationsService: NotificationsService) { }
 
     @Get()
-    getAll() {
-        return this.notificationsService.getAll();
+    getAll(@CurrentUser() user: any) {
+        return this.notificationsService.getAll(user.userId);
     }
 
     @Patch('read-all')
-    markAllAsRead() {
-        return this.notificationsService.markAllAsRead();
+    markAllAsRead(@CurrentUser() user: any) {
+        return this.notificationsService.markAllAsRead(user.userId);
     }
 }

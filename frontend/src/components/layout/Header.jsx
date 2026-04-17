@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import API_BASE_URL from '../../services/apiConfig';
 import './Header.css';
 
 const Header = ({ user, onSearch, onNavigate, onLogout }) => {
@@ -32,7 +33,10 @@ const Header = ({ user, onSearch, onNavigate, onLogout }) => {
   useEffect(() => {
     const fetchNotifications = async () => {
       try {
-        const response = await fetch('http://localhost:3001/api/notifications');
+        const token = localStorage.getItem('careway_token');
+        const response = await fetch(`${API_BASE_URL}/notifications`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
         const data = await response.json();
         setNotifications(data);
       } catch (err) {
@@ -52,7 +56,10 @@ const Header = ({ user, onSearch, onNavigate, onLogout }) => {
     const fetchResults = async () => {
       setLoadingSearch(true);
       try {
-        const response = await fetch(`http://localhost:3001/api/search?q=${encodeURIComponent(query)}`);
+        const token = localStorage.getItem('careway_token');
+        const response = await fetch(`${API_BASE_URL}/search?q=${encodeURIComponent(query)}`, {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
         const data = await response.json();
         setResults(data);
       } catch (err) {
@@ -85,7 +92,11 @@ const Header = ({ user, onSearch, onNavigate, onLogout }) => {
 
   const markAllAsRead = async () => {
     try {
-      await fetch('http://localhost:3001/api/notifications/read-all', { method: 'PATCH' });
+      const token = localStorage.getItem('careway_token');
+      await fetch(`${API_BASE_URL}/notifications/read-all`, { 
+        method: 'PATCH',
+        headers: { 'Authorization': `Bearer ${token}` }
+      });
       setNotifications(notifications.map(n => ({ ...n, read: true })));
     } catch (err) {
       console.error(err);

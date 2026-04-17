@@ -1,0 +1,64 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+  namespace: ptutcare
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+      - name: backend
+        image: manar2/careway-backend:latest
+        ports:
+        - containerPort: 3001
+        env:
+        - name: PORT
+          value: "3001"
+        - name: NODE_ENV
+          value: "production"
+        - name: DB_HOST
+          value: "mysql.mysql.svc.cluster.local"
+        - name: DB_PORT
+          value: "3306"
+        - name: DB_DATABASE
+          value: "ptutcare"
+        - name: DB_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: db-credentials
+              key: username
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: db-credentials
+              key: password
+        - name: JWT_SECRET
+          value: "your_jwt_secret_change_me"
+        - name: SMTP_USER
+          value: "manarkrid3@gmail.com"
+        - name: SMTP_PASS
+          value: "dbdy icjb vwde lcvm"
+        - name: FRONTEND_URL
+          value: "https://careway-ptutcare.chl.connected-health.fr"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend
+  namespace: ptutcare
+spec:
+  selector:
+    app: backend
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3001
+  type: ClusterIP

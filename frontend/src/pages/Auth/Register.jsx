@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import API_BASE_URL from '../../services/apiConfig';
 import './Login.css'; // We share the same premium CSS
 
 const Register = ({ onNavigateToLogin }) => {
@@ -23,7 +24,7 @@ const Register = ({ onNavigateToLogin }) => {
         setLoading(true);
 
         try {
-            const response = await fetch('http://localhost:3001/api/auth/register', {
+            const response = await fetch(`${API_BASE_URL}/auth/register`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(formData)

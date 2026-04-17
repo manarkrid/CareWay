@@ -1,0 +1,34 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: careway-ingress
+  namespace: ptutcare
+  annotations:
+    cert-manager.io/cluster-issuer: letsencryptcluster
+spec:
+  tls:
+  - hosts:
+    - careway-ptutcare.chl.connected-health.fr
+    - careway-api-ptutcare.chl.connected-health.fr
+    secretName: careway-tls-cert
+  rules:
+  - host: careway-ptutcare.chl.connected-health.fr
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: frontend
+            port:
+              number: 80
+  - host: careway-api-ptutcare.chl.connected-health.fr
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: backend
+            port:
+              number: 80

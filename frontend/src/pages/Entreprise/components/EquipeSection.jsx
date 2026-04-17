@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import API_BASE_URL from '../../../services/apiConfig';
 import './EquipeSection.css';
 import AddEmployeeModal from './AddEmployeeModal.jsx';
 import { useTrips } from '../../../context/TripContext';
@@ -11,7 +12,7 @@ const EquipeSection = () => {
   const [statusFilter, setStatusFilter] = useState('Tous');
 
   const handleAddEmployee = (newEmployee) => {
-    fetch('http://localhost:3001/api/entreprise/equipe', {
+    fetch(`${API_BASE_URL}/entreprise/equipe`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(newEmployee)

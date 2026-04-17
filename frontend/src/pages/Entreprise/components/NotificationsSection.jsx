@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
+import API_BASE_URL from '../../../services/apiConfig';
 import './NotificationsSection.css';
 
 const NotificationsSection = () => {
   const [notifications, setNotifications] = useState([]);
 
   const fetchSettings = () => {
-    fetch('http://localhost:3001/api/entreprise/notifications/settings')
+    fetch(`${API_BASE_URL}/entreprise/notifications/settings`)
       .then(res => res.json())
       .then(data => setNotifications(data))
       .catch(err => console.error("Error fetching notification settings:", err));
@@ -16,7 +17,7 @@ const NotificationsSection = () => {
   }, []);
 
   const handleToggle = (id, currentStatus) => {
-    fetch(`http://localhost:3001/api/entreprise/notifications/settings/${id}`, {
+    fetch(`${API_BASE_URL}/entreprise/notifications/settings/${id}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ enabled: !currentStatus })

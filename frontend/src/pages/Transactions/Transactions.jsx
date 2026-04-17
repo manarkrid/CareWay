@@ -1,12 +1,41 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import API_BASE_URL from '../../services/apiConfig';
 import './Transactions.css';
 import jsPDF from 'jspdf';
 const Transactions = () => {
   const [activeMainTab, setActiveMainTab] = useState('Tout');
   const [activeFilterTab, setActiveFilterTab] = useState('Toutes les transactions');
   const [currentPage, setCurrentPage] = useState(1);
+  const [transactions, setTransactions] = useState([]);
+  const [monthlyData, setMonthlyData] = useState([]);
 
   const ITEMS_PER_PAGE = 3; // nombre de transactions par page
+
+  useEffect(() => {
+    const token = localStorage.getItem('careway_token');
+    
+    // Fetch transactions
+    fetch(`${API_BASE_URL}/transactions`, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    })
+      .then(res => res.json())
+      .then(data => setTransactions(data))
+      .catch(() => setTransactions([
+        { date: '31/07/2025', idTrajet: '#TR-2038', patient: 'L. Martin', distance: '18km', statut: 'Payé (CPAM)', montant: '25€', icon: '✓' },
+        { date: '31/07/2025', idTrajet: '#TR-2037', patient: 'J. Roux', distance: '12km', statut: 'Payé (CPAM)', montant: '20€', icon: '✓' },
+      ]));
+
+    // Fetch monthly summary
+    fetch(`${API_BASE_URL}/transactions/monthly`, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    })
+      .then(res => res.json())
+      .then(data => setMonthlyData(data))
+      .catch(() => setMonthlyData([
+        { month: 'Juillet', totalTrajets: 108, recusCPAM: '3 742€', totalNet: '3 677€' },
+        { month: 'Juin', totalTrajets: 120, recusCPAM: '4 385€', totalNet: '4 102€' }
+      ]));
+  }, []);
 
   const mainTabs = [
     'Tout',
@@ -22,18 +51,6 @@ const Transactions = () => {
     'En attente',
     'Rejeté',
     'Partiel'
-  ];
-
-  const transactions = [
-    { date: '31/07/2025', idTrajet: '#TR-2038', patient: 'L. Martin', distance: '18km', statut: 'Payé (CPAM)', montant: '25€', icon: '✓' },
-    { date: '31/07/2025', idTrajet: '#TR-2037', patient: 'J. Roux', distance: '12km', statut: 'Payé (CPAM)', montant: '20€', icon: '✓' },
-    { date: '30/07/2025', idTrajet: '#TR-2036', patient: 'H. Bernard', distance: '25km', statut: 'Attente', montant: '31€', icon: '⏱' },
-    { date: '30/07/2025', idTrajet: '#TR-2035', patient: 'E. Dupont', distance: '20km', statut: 'Rejeté', montant: '38€', icon: '✕' },
-    { date: '30/07/2025', idTrajet: '#TR-2034', patient: 'C. Lisle', distance: '10km', statut: 'Payé (CPAM)', montant: '19€', icon: '✓' },
-    { date: '29/07/2025', idTrajet: '#TR-2033', patient: 'M. Durand', distance: '15km', statut: 'Payé (CPAM)', montant: '22€', icon: '✓' },
-    { date: '29/07/2025', idTrajet: '#TR-2032', patient: 'A. Petit', distance: '30km', statut: 'Attente', montant: '45€', icon: '⏱' },
-    { date: '28/07/2025', idTrajet: '#TR-2031', patient: 'B. Moreau', distance: '8km', statut: 'Rejeté', montant: '15€', icon: '✕' },
-    { date: '28/07/2025', idTrajet: '#TR-2030', patient: 'S. Laurent', distance: '22km', statut: 'Payé (CPAM)', montant: '28€', icon: '✓' },
   ];
 
   // ✅ Filtre par statut
@@ -91,10 +108,7 @@ const Transactions = () => {
   doc.save(`Facture_${transaction.idTrajet.replace('#', '')}.pdf`);
 };
 
-  const monthlyData = [
-    { month: 'Juillet', totalTrajets: 108, recusCPAM: '3 742€', totalNet: '3 677€' },
-    { month: 'Juin', totalTrajets: 120, recusCPAM: '4 385€', totalNet: '4 102€' }
-  ];
+  // Utilise les données du state peuplées par le fetch
 
   return (
     <div className="transactions-page">

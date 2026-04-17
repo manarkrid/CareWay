@@ -28,8 +28,8 @@ import { User } from './modules/users/user.entity';
       username: process.env.DB_USERNAME || 'root',
       password: process.env.DB_PASSWORD || '',
       database: process.env.DB_DATABASE || 'careway',
-      entities: [User],
-      synchronize: false, // Table already created manually in phpMyAdmin
+      autoLoadEntities: true,
+      synchronize: true, // Activé pour créer les tables automatiquement
     }),
     AuthModule,
     UsersModule,

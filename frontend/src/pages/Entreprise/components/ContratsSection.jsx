@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import API_BASE_URL from '../../../services/apiConfig';
 import './ContratsSection.css';
 
 const EMPTY = { organisme: '', type: 'Convention', dateDebut: '', dateFin: '', statut: 'Actif' };
@@ -10,7 +11,7 @@ const ContratsSection = () => {
   const [form, setForm] = useState(EMPTY);
 
   useEffect(() => {
-    fetch('http://localhost:3001/api/entreprise/contrats')
+    fetch(`${API_BASE_URL}/entreprise/contrats`)
       .then(res => res.json())
       .then(data => setContrats(data))
       .catch(() => setContrats([

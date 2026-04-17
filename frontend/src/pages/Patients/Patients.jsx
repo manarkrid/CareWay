@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import API_BASE_URL from '../../services/apiConfig';
 import './Patients.css';
 
 const SearchIcon = () => (
@@ -105,14 +106,14 @@ const Patients = () => {
   const patientsPerPage = 8;
 
   useEffect(() => {
-    fetch('http://localhost:3001/api/patients/stats')
+    fetch(`${API_BASE_URL}/patients/stats`)
       .then(res => res.json())
       .then(data => setStats(data))
       .catch(() => {});
   }, []);
 
   useEffect(() => {
-    fetch('http://localhost:3001/api/patients')
+    fetch(`${API_BASE_URL}/patients`)
       .then(res => res.json())
       .then(data => {
         const patients = data.data || data;

@@ -71,7 +71,7 @@ export class AuthService {
     const { password, ...userWithoutPassword } = user;
 
     // Reset notifications pour la démo
-    this.notificationsService.resetNotifications();
+    this.notificationsService.resetNotifications(user.id);
 
     return {
       message: 'Connexion réussie',
@@ -100,7 +100,8 @@ export class AuthService {
       },
     });
 
-    const resetLink = `http://localhost:3002/reset-password?token=${resetToken}`;
+    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3002';
+    const resetLink = `${frontendUrl}/reset-password?token=${resetToken}`;
 
     await transporter.sendMail({
       from: `"CareWay Support" <${process.env.SMTP_USER}>`,

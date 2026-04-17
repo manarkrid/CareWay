@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import API_BASE_URL from '../../services/apiConfig';
 import './Login.css';
 
 const ForgotPassword = ({ onNavigateToLogin }) => {
@@ -14,7 +15,7 @@ const ForgotPassword = ({ onNavigateToLogin }) => {
         setLoading(true);
 
         try {
-            const response = await fetch('http://localhost:3001/api/auth/forgot-password', {
+            const response = await fetch(`${API_BASE_URL}/auth/forgot-password`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email })

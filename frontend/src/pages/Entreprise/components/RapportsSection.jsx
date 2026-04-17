@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import API_BASE_URL from '../../../services/apiConfig';
 
 const RapportsSection = () => {
   const [rapports, setRapports] = useState([]);
@@ -13,7 +14,7 @@ const RapportsSection = () => {
 
   const fetchReports = async () => {
     try {
-      const response = await fetch('http://localhost:3001/api/entreprise/rapports');
+      const response = await fetch(`${API_BASE_URL}/entreprise/rapports`);
       if (response.ok) {
         const data = await response.json();
         setRapports(data);
@@ -41,7 +42,7 @@ const RapportsSection = () => {
 
   const handleDownload = async (report) => {
     try {
-      const response = await fetch(`http://localhost:3001/api/entreprise/rapport/${report.id}/download`);
+      const response = await fetch(`${API_BASE_URL}/entreprise/rapport/${report.id}/download`);
       if (response.ok) {
         const blob = await response.blob();
         const url = window.URL.createObjectURL(blob);

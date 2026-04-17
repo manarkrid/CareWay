@@ -9,7 +9,7 @@ export class SearchService {
         private patientsService: PatientsService,
     ) { }
 
-    search(query: string) {
+    search(userId: number, query: string) {
         if (!query || query.trim() === '') {
             return { patients: [], demandes: [], pages: [] };
         }
@@ -36,7 +36,7 @@ export class SearchService {
             .map(p => ({ id: p.id, label: p.name, subLabel: p.address, action: 'patients', icon: '👤' }));
 
         // Demandes mock
-        const allDemandes = this.demandesService.getAll();
+        const allDemandes = this.demandesService.getAll(userId);
         const matchedDemandes = allDemandes
             .filter(d => d.name.toLowerCase().includes(lowerQuery) || d.from.toLowerCase().includes(lowerQuery) || d.to.toLowerCase().includes(lowerQuery))
             .slice(0, 5)

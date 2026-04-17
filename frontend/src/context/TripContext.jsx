@@ -1,4 +1,5 @@
 import React, { createContext, useState, useContext, useEffect } from 'react';
+import API_BASE_URL from '../services/apiConfig';
 
 const TripContext = createContext();
 
@@ -20,17 +21,17 @@ export const TripProvider = ({ children }) => {
     setIsLoading(true);
     try {
       // Fetch all trips for Enterprise page
-      const tripsRes = await fetch('http://localhost:3001/api/entreprise/trajets');
+      const tripsRes = await fetch(`${API_BASE_URL}/entreprise/trajets`);
       const tripsData = await tripsRes.json();
       setTrips(tripsData);
 
       // Fetch employees for dropdowns
-      const employeesRes = await fetch('http://localhost:3001/api/entreprise/equipe');
+      const employeesRes = await fetch(`${API_BASE_URL}/entreprise/equipe`);
       const employeesData = await employeesRes.json();
       setEmployees(employeesData);
 
       // Fetch next trip for Sidebar
-      const nextRes = await fetch('http://localhost:3001/api/entreprise/trajets/next');
+      const nextRes = await fetch(`${API_BASE_URL}/entreprise/trajets/next`);
       const nextData = await nextRes.json();
       setNextTrip(nextData);
     } catch (error) {
@@ -42,7 +43,7 @@ export const TripProvider = ({ children }) => {
 
   const addNewTrajet = async (trajetData) => {
     try {
-      const response = await fetch('http://localhost:3001/api/calendrier/trajet', {
+      const response = await fetch(`${API_BASE_URL}/calendrier/trajet`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(trajetData)

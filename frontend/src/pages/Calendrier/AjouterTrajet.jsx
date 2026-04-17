@@ -10,6 +10,7 @@ const AjouterTrajet = ({ isOpen, onClose, onSave }) => {
     heureDebut: '',
     heureFin: '',
     adresse: '',
+    adresseArrivee: '',
     personnes: [],
     repetition: 'Aucune',
     joursSemaine: []
@@ -23,15 +24,13 @@ const AjouterTrajet = ({ isOpen, onClose, onSave }) => {
   const suggestions = [
     {
       id: 1,
-      titre: "Créneau disponible 1",
-      date: "19 Juin 2025",
-      heure: "8h15 : 10h30"
-    },
-    {
-      id: 2,
-      titre: "Créneau disponible 2",
-      date: "21 Juin 2025",
-      heure: "8h15 : 10h30"
+      titre: formData.adresse && formData.adresseArrivee 
+        ? `Trajet: ${formData.adresse.split(',')[0]} → ${formData.adresseArrivee.split(',')[0]}`
+        : "Nouveau trajet suggéré",
+      date: formData.dateDebut || "Date à définir",
+      heure: formData.heureDebut && formData.heureFin 
+        ? `${formData.heureDebut} : ${formData.heureFin}` 
+        : "8h15 : 10h30"
     }
   ];
 
@@ -300,17 +299,26 @@ const AjouterTrajet = ({ isOpen, onClose, onSave }) => {
             </div>
           </div>
 
-          {/* Adresse */}
           <div className="field-group">
             <label className="field-label">Entrer une adresse</label>
-            <input
-              type="text"
-              className="address-input"
-              placeholder="Adresse de départ..."
-              name="adresse"
-              value={formData.adresse}
-              onChange={handleInputChange}
-            />
+            <div style={{ display: 'flex', gap: '12px', flexDirection: 'column' }}>
+              <input
+                type="text"
+                className="address-input"
+                placeholder="Adresse de départ..."
+                name="adresse"
+                value={formData.adresse}
+                onChange={handleInputChange}
+              />
+              <input
+                type="text"
+                className="address-input"
+                placeholder="Adresse d'arrivée..."
+                name="adresseArrivee"
+                value={formData.adresseArrivee}
+                onChange={handleInputChange}
+              />
+            </div>
           </div>
 
           {/* Personnes */}

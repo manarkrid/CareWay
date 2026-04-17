@@ -2,26 +2,37 @@ import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class DemandesService {
-  private demandes = [
-    { id: 1, name: 'Marie Dubois', date: '30/06/25', time: '10h15', from: '4 rue Foch', to: 'CHIC Castres Mazamet', type: 'VSL', direction: 'Aller-simple', distance: '22km', duration: '35mins', status: 'Attente', wait: '1h', price: 54 },
-    { id: 2, name: 'François Dupont', date: '22/06/25', time: '8h30', from: '6 av. Trois', to: 'Clinique du Sidobre', type: 'VSL', direction: 'Aller-simple', distance: '22km', duration: '26mins', status: 'Attente', wait: '30mins', price: 43 },
-    { id: 3, name: 'Anne Pichet', date: '20/06/25', time: '9h15', from: '32 rue du Lilas', to: 'EHPAD', type: 'VSL', direction: 'Aller-simple', distance: '19km', duration: '15mins', status: 'Attente', price: 36 },
-    { id: 4, name: 'Jean-Paul Renard', date: '18/06/25', time: '11h00', from: '5 bd Roosevelt', to: 'Centre Médical du Soult', type: 'TAXI', direction: 'Aller-retour', distance: '14km', duration: '20mins', status: 'Attente', wait: '2h', price: 42 },
-    { id: 5, name: 'Sophie Martin', date: '17/06/25', time: '14h30', from: '2 rue Gambetta', to: 'Cabinet Médical Centre', type: 'VSL', direction: 'Aller-simple', distance: '8km', duration: '12mins', status: 'Attente', price: 25 },
+  private userDemandes = new Map<number, any[]>();
+
+  private readonly DEFAULT_DEMANDES = [
+    { id: 1, name: 'Marie Dubois', date: '30/06/25', time: '10h15', from: '4 rue Foch', to: 'CHIC Castres Mazamet', type: 'VSL', direction: 'Aller-simple', distance: '22km', duration: '35mins', status: 'Attente', wait: '1h', price: 54, mutualisable: true },
+    { id: 2, name: 'François Dupont', date: '22/06/25', time: '8h30', from: '6 av. Trois', to: 'Clinique du Sidobre', type: 'VSL', direction: 'Aller-simple', distance: '22km', duration: '26mins', status: 'Attente', wait: '30mins', price: 43, mutualisable: false },
+    { id: 3, name: 'Anne Pichet', date: '20/06/25', time: '9h15', from: '32 rue du Lilas', to: 'EHPAD', type: 'VSL', direction: 'Aller-simple', distance: '19km', duration: '15mins', status: 'Attente', price: 36, mutualisable: true },
+    { id: 4, name: 'Jean-Paul Renard', date: '18/06/25', time: '11h00', from: '5 bd Roosevelt', to: 'Centre Médical du Soult', type: 'TAXI', direction: 'Aller-retour', distance: '14km', duration: '20mins', status: 'Attente', wait: '2h', price: 42, mutualisable: true },
+    { id: 5, name: 'Sophie Martin', date: '17/06/25', time: '14h30', from: '2 rue Gambetta', to: 'Cabinet Médical Centre', type: 'VSL', direction: 'Aller-simple', distance: '8km', duration: '12mins', status: 'Attente', price: 25, mutualisable: false },
   ];
 
-  getAll() {
-    return this.demandes;
+  private getDemandesForUser(userId: number): any[] {
+    if (!this.userDemandes.has(userId)) {
+      // Clone DEFAULT_DEMANDES for this new user
+      this.userDemandes.set(userId, JSON.parse(JSON.stringify(this.DEFAULT_DEMANDES)));
+    }
+    return this.userDemandes.get(userId);
   }
 
-  updateStatut(id: number, statut: string) {
-    const demande = this.demandes.find(d => d.id === id);
+  getAll(userId: number) {
+    return this.getDemandesForUser(userId);
+  }
+
+  updateStatut(userId: number, id: number, statut: string) {
+    const demandes = this.getDemandesForUser(userId);
+    const demande = demandes.find(d => d.id === id);
     if (!demande) return { error: 'Demande non trouvée' };
     demande.status = statut;
     return demande;
   }
 
-  getPriceMarkers() {
+  getPriceMarkers() { // Shared or per-user? Let's keep it shared as it's static for now
     return [
       { price: 36, left: '15%', top: '25%' },
       { price: 25, left: '25%', top: '35%' },
@@ -39,4 +50,4 @@ export class DemandesService {
       { price: 43, left: '85%', top: '80%' },
     ];
   }
-}
+}

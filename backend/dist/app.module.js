@@ -21,7 +21,6 @@ const patients_module_1 = require("./modules/patients/patients.module");
 const calendrier_module_1 = require("./modules/calendrier/calendrier.module");
 const search_module_1 = require("./modules/search/search.module");
 const notifications_module_1 = require("./modules/notifications/notifications.module");
-const user_entity_1 = require("./modules/users/user.entity");
 let AppModule = class AppModule {
 };
 exports.AppModule = AppModule;
@@ -36,8 +35,8 @@ exports.AppModule = AppModule = __decorate([
                 username: process.env.DB_USERNAME || 'root',
                 password: process.env.DB_PASSWORD || '',
                 database: process.env.DB_DATABASE || 'careway',
-                entities: [user_entity_1.User],
-                synchronize: false,
+                autoLoadEntities: true,
+                synchronize: true,
             }),
             auth_module_1.AuthModule,
             users_module_1.UsersModule,

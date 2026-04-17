@@ -2,17 +2,28 @@ import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class TransactionsService {
-  getAll() {
-    return [
-      { date: '31/07/2025', idTrajet: '#TR-2038', patient: 'L. Martin', distance: '18km', statut: 'Payé (CPAM)', montant: '25€', icon: '✓' },
-      { date: '31/07/2025', idTrajet: '#TR-2037', patient: 'J. Roux', distance: '12km', statut: 'Payé (CPAM)', montant: '20€', icon: '✓' },
-      { date: '30/07/2025', idTrajet: '#TR-2036', patient: 'H. Bernard', distance: '25km', statut: 'Attente', montant: '31€', icon: '⏱' },
-      { date: '30/07/2025', idTrajet: '#TR-2035', patient: 'E. Dupont', distance: '20km', statut: 'Rejeté', montant: '38€', icon: '✕' },
-      { date: '30/07/2025', idTrajet: '#TR-2034', patient: 'C. Lisle', distance: '10km', statut: 'Payé (CPAM)', montant: '19€', icon: '✓' },
-      { date: '29/07/2025', idTrajet: '#TR-2033', patient: 'M. Dubois', distance: '15km', statut: 'Payé (CPAM)', montant: '22€', icon: '✓' },
-      { date: '29/07/2025', idTrajet: '#TR-2032', patient: 'P. Moreau', distance: '30km', statut: 'Attente', montant: '44€', icon: '⏱' },
-      { date: '28/07/2025', idTrajet: '#TR-2031', patient: 'A. Lefebvre', distance: '8km', statut: 'Payé (CPAM)', montant: '16€', icon: '✓' },
-    ];
+  private userTransactions = new Map<number, any[]>();
+
+  private readonly DEFAULT_TRANSACTIONS = [
+    { date: '31/07/2025', idTrajet: '#TR-2038', patient: 'L. Martin', distance: '18km', statut: 'Payé (CPAM)', montant: '25€', icon: '✓' },
+    { date: '31/07/2025', idTrajet: '#TR-2037', patient: 'J. Roux', distance: '12km', statut: 'Payé (CPAM)', montant: '20€', icon: '✓' },
+    { date: '30/07/2025', idTrajet: '#TR-2036', patient: 'H. Bernard', distance: '25km', statut: 'Attente', montant: '31€', icon: '⏱' },
+    { date: '30/07/2025', idTrajet: '#TR-2035', patient: 'E. Dupont', distance: '20km', statut: 'Rejeté', montant: '38€', icon: '✕' },
+    { date: '30/07/2025', idTrajet: '#TR-2034', patient: 'C. Lisle', distance: '10km', statut: 'Payé (CPAM)', montant: '19€', icon: '✓' },
+    { date: '29/07/2025', idTrajet: '#TR-2033', patient: 'M. Dubois', distance: '15km', statut: 'Payé (CPAM)', montant: '22€', icon: '✓' },
+    { date: '29/07/2025', idTrajet: '#TR-2032', patient: 'P. Moreau', distance: '30km', statut: 'Attente', montant: '44€', icon: '⏱' },
+    { date: '28/07/2025', idTrajet: '#TR-2031', patient: 'A. Lefebvre', distance: '8km', statut: 'Payé (CPAM)', montant: '16€', icon: '✓' },
+  ];
+
+  private getTransactionsForUser(userId: number): any[] {
+    if (!this.userTransactions.has(userId)) {
+      this.userTransactions.set(userId, JSON.parse(JSON.stringify(this.DEFAULT_TRANSACTIONS)));
+    }
+    return this.userTransactions.get(userId);
+  }
+
+  getAll(userId: number) {
+    return this.getTransactionsForUser(userId);
   }
 
   getMonthlySummary() {
@@ -34,4 +45,4 @@ export class TransactionsService {
       { date: '31/07', montant: 290 },
     ];
   }
-}
+}

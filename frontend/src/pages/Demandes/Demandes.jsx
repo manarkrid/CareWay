@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import API_BASE_URL from '../../services/apiConfig';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -79,7 +80,10 @@ const Demandes = ({ filterQuery = '' }) => {
   const itemsPerPage = 5;
 
   useEffect(() => {
-    fetch('http://localhost:3001/api/demandes')
+    const token = localStorage.getItem('careway_token');
+    fetch(`${API_BASE_URL}/demandes`, {
+      headers: { 'Authorization': `Bearer ${token}` }
+    })
       .then(res => res.json())
       .then(data => setDemandes(data))
       .catch(() => setDemandes([
@@ -93,8 +97,13 @@ const Demandes = ({ filterQuery = '' }) => {
   }, []);
 
   const handleStatut = (id, statut) => {
-    fetch(`http://localhost:3001/api/demandes/${id}/statut`, {
-      method: 'PATCH', headers: { 'Content-Type': 'application/json' },
+    const token = localStorage.getItem('careway_token');
+    fetch(`${API_BASE_URL}/demandes/${id}/statut`, {
+      method: 'PATCH', 
+      headers: { 
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
       body: JSON.stringify({ statut })
     })
       .then(res => res.json())

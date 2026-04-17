@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import API_BASE_URL from '../../services/apiConfig';
 import './Profil.css';
 import { FiCamera } from 'react-icons/fi';
 
@@ -103,7 +104,7 @@ const Profil = ({ user, onUpdateUser }) => {
   const fetchProfile = async () => {
     try {
       setLoading(true);
-      const res = await fetch(`http://localhost:3001/api/users/profile/${user.id}`);
+      const res = await fetch(`${API_BASE_URL}/users/profile/${user.id}`);
       if (!res.ok) throw new Error('Erreur lors du chargement du profil');
       const data = await res.json();
       setUserData(data);
@@ -138,7 +139,7 @@ const Profil = ({ user, onUpdateUser }) => {
         delete dataToSave.password;
       }
 
-      const res = await fetch(`http://localhost:3001/api/users/profile/${user.id}`, {
+      const res = await fetch(`${API_BASE_URL}/users/profile/${user.id}`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(dataToSave)

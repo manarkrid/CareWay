@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
+import API_BASE_URL from '../../../services/apiConfig';
 import './HistoriqueSection.css';
 
 const HistoriqueSection = () => {
   const [stats, setStats] = useState(null);
 
   useEffect(() => {
-    fetch('http://localhost:3001/api/entreprise/historique')
+    fetch(`${API_BASE_URL}/entreprise/historique`)
       .then(res => res.json())
       .then(data => setStats(data))
       .catch(err => console.error("Error fetching stats:", err));

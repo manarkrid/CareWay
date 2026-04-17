@@ -5,9 +5,11 @@ import { AppModule } from './app.module';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  // Enable CORS for frontend (port 3002)
+  // Enable CORS
+  const frontendUrls = (process.env.FRONTEND_URL || 'http://localhost:3000,http://localhost:3002,http://localhost:3001').split(',');
+  
   app.enableCors({
-    origin: ['http://localhost:3000', 'http://localhost:3002', 'http://localhost:3001'],
+    origin: frontendUrls,
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
@@ -19,7 +21,8 @@ async function bootstrap() {
   // Set global prefix
   app.setGlobalPrefix('api');
 
-  await app.listen(3001);
-  console.log('🚀 CareWay Backend API running on http://localhost:3001');
+  const port = process.env.PORT || 3001;
+  await app.listen(port);
+  console.log(`🚀 CareWay Backend API running on port ${port}`);
 }
 bootstrap();
